@@ -1,8 +1,8 @@
 /*Problem 2.59*/
 
 
-//yield a word consisting of least significant
-//byte of x and remaining bytes of y
+/* yield a word consisting of least significant
+   byte of x and remaining bytes of y */
 unsigned combine_hex(unsigned x, unsigned y)
 {
 	//x op-and with 0xff to remani the lowest byte

@@ -1,7 +1,7 @@
 /*Porblem 2.60*/
 
-//return an unsigned value which byte i of argument x has been
-//replaced by byte b
+/* return an unsigned value which byte i of argument x has been
+   replaced by byte b */
 unsigned replace_byte(unsigned x, int i, unsigned char b)
 {
 	//multipy i by 3 to indicate a byte and then move b to position

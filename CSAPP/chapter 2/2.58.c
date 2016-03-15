@@ -1,7 +1,7 @@
 /*Problem 2.58*/
 
-/*return 1 if run on little-endian machine
- should be regardless a machine wordsize*/
+/* return 1 if run on little-endian machine
+   should be regardless a machine wordsize */
 int is_little_endian(void)
 {
 	int i = 1;

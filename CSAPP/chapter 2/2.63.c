@@ -1,9 +1,10 @@
 /*Problem 2.63*/
 
-
-// perform logical right shift using
-// an arithmetic right shift
-// parameter k in the range of 0 to w-1
+/*
+ * perform logical right shift using
+ * an arithmetic right shift
+ * parameter k in the range of 0 to w-1
+ */
 unsigned srl(unsigned x, int k)
 {
 	/* Perform shift arithmetically*/
@@ -16,10 +17,11 @@ unsigned srl(unsigned x, int k)
 	return xsra & (mask - 1);
 }
 
-
-// performs an archithmetic right shift
-// using a logical right shift
-// parameter k in the range of 0 to w-1
+/*
+ * performs an archithmetic right shift
+ * using a logical right shift
+ * parameter k in the range of 0 to w-1 
+ */
 int sra(int x, int k)
 {
 	/* Perform shift logically */

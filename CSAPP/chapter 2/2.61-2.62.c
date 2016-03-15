@@ -9,7 +9,7 @@
 
 //2.62
 
-//return 1 when run on a machine that uses arithmetic right shifts
+/* return 1 when run on a machine that uses arithmetic right shifts */
 int int_shifts_are_arithmetic(void)
 {
 	int i = -1;
