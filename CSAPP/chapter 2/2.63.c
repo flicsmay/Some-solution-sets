@@ -13,7 +13,7 @@ unsigned srl(unsigned x, int k)
 	unsigned w = (sizeof(int)) << 3;
 	unsigned mask = 1 << (w - k);
 	
-	//make a mask that cover the least significant w-k bits, then imple and-op
+	//make a mask that cover the low-order w-k bits, then imple and-op
 	return xsra & (mask - 1);
 }
 
@@ -32,7 +32,7 @@ int sra(int x, int k)
 
 	if (x < 0)
 	{
-		//make a mask that switch most significant k bits then or-op
+		//make a mask that switch high-order k bits then or-op
 		return xsrl | mask;
 	}
 	return xsrl;
