@@ -10,7 +10,7 @@
 int tsub_ok(int x, int y)
 {
 	int w = sizeof(int) << 3;
-	int ans_sign = (x - y) >> (w - 1);
+	int result_sign = (x - y) >> (w - 1);
 
 	x >>= (w - 1);
 	y >>= (w - 1);
@@ -24,7 +24,7 @@ int tsub_ok(int x, int y)
 	//	((!x) & y & ans_sign));
 
 	//or there are a simpler way (notice that y always equals to ans above)
-	return !((x != y) && (y == ans_sign));
+	return !((x != y) && (y == result_sign));
 }
 
 

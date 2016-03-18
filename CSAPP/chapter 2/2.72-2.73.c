@@ -25,19 +25,19 @@ int saturating_add(int x, int y)
 	int pos_ovf = 0;
 	int neg_ovf = 0;
 	int nop_ovf = 0;
-	int answer = x + y;
-	int ans_sign = answer >> (w - 1);// extend the answer sign to w bits
+	int result = x + y;
+	int result_sign = result >> (w - 1);// extend the result sign to w bits
 
 	x >>= (w - 1);// extend sign to w bits
 	y >>= (w - 1);// extend sign to w bits
 
 	// set all bits to 1 when an overflow occurance similary hereinafter
-	pos_ovf = (~x) & (~y) & ans_sign; // 1 1 0 and set 1
-	neg_ovf = x & y & (~ans_sign); // 0 0 1 and set 1
+	pos_ovf = (~x) & (~y) & result_sign; // 1 1 0 and set 1
+	neg_ovf = x & y & (~result_sign); // 0 0 1 and set 1
 	nop_ovf = ~(pos_ovf | neg_ovf); // set 1 when both 0 above
 
 	// the three w-bits mask to select which one to return
-	return (pos_ovf & INT_MAX) | (nop_ovf & answer) | (neg_ovf & INT_MIN);
+	return (pos_ovf & INT_MAX) | (nop_ovf & result) | (neg_ovf & INT_MIN);
 }
 
 
