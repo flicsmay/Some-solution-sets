@@ -1,7 +1,7 @@
 /*Problems 2.55 - 2.57*/
 
-/* source code in this solution
-   come from page 28(chs ver) */
+/* You can find identical source code of this 
+   soluction on your book */
 #include <stdio.h>
 
 /*
