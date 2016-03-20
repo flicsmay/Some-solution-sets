@@ -1,4 +1,4 @@
-/* Problems 2.80-2.89 */
+/* Problems 2.80-2.90 */
 
 /* 2.80 */
 
@@ -15,7 +15,7 @@
 
 /* 2.82 */
 // A. x = Y / (2^k - 1) (as x * 2^k = Y + x(infinite))
-// B. (a)101 = 5/7 .(b)0110 = 6/15 .(c)010011 = 18/63 (using formula above)
+// B. (a)101 = 5/7 .(b)0110 = 6/15 .(c)010011 = 19/63 (using formula above)
 
 
 /* 2.83 */
@@ -90,9 +90,18 @@
 //	printf("%d\n", expre);
 //}
 
-
 /* 2.89 */
-void fpwr2(int x)
+// ********* Please uncomment the function u2f and the return line of fpwr2 before running **********//
+
+
+/* Convert num type to float from unsigned
+   As a Callee founction of fpwr2*/
+//float u2f(unsigned u)
+//{
+//	return *((float *)&u);
+//}
+
+float fpwr2(int x)
 {
 	/* Result exponent and fraction */
 	unsigned exp, frac;
@@ -123,22 +132,27 @@ void fpwr2(int x)
 	/* Pack exp and frac into 32 bits */
 	u = exp << 23 | frac;
 	/* Return as float */
-
-	// I modify the function to check the function easier
-	printf("%f\n", *fp);
-	printf("%.2x\n", u);
+	/* uncomment the line before running */
+	//return u2f(u);
 }
-
 
 //int main()
 //{
 //	int neg_ovf = -150;
 //	int pos_ovf = 128;
 //
-//	fpwr2(neg_ovf);
-//	fpwr2(neg_ovf + 1);
-//	fpwr2(pos_ovf);
-//	fpwr2(pos_ovf - 1);
+//	printf("%f\n", fpwr2(neg_ovf));
+//	printf("%f\n", fpwr2(neg_ovf + 1));
+//	printf("%f\n", fpwr2(pos_ovf));
+//	printf("%f\n", fpwr2(pos_ovf - 1));
 //}
 //// Both the upper two print 0 and I guess the reason is that 
 //// the precision is not enough to cover all fraction.
+
+
+
+/* 2.90 */
+// A. 0 10000000 10010010000111111011011
+//    11.0010010000...
+// B. 11.001001001...[001] // according to problem 2.82
+// C. form the ninth bit
