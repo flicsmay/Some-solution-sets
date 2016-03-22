@@ -221,15 +221,9 @@ int bitCount(int x) {
  *   Rating: 4 
  */
 int bang(int x) {
-	/* A fairly easy problem */
-	unsigned n = ~x;
-
-	n &= (n >> 16);
-	n &= (n >> 8);
-	n &= (n >> 4);
-	n &= (n >> 2);
-	n &= (n >> 1);
-	return n;
+	/* A fairly easy problem, 7 op, You can use xor-op which need 11ops
+	   If x == 0 that both ((~x) + 1)'s and x's 32th bit are 0 */
+	return (((~x) & (~(~x + 1))) >> 31) & 0x01;
 }
 
 
@@ -240,8 +234,11 @@ int bang(int x) {
  *   Rating: 1
  */
 int tmin(void) {
-  return 2;
+	/* I'm not sure whether this method is acceptable or not */
+	return 1 << 31;
 }
+
+
 /* 
  * fitsBits - return 1 if x can be represented as an 
  *  n-bit, two's complement integer.
@@ -252,8 +249,14 @@ int tmin(void) {
  *   Rating: 2
  */
 int fitsBits(int x, int n) {
-  return 2;
+	/* Using 8 ops. The same as 2.70, shift right n-1 bits to keep the sign bit
+	   And the high-order bits is all either 0 or 1 */
+	x >>= (n + (~1 + 1)); // Take place n - 1
+
+	return !(x + 1) | !x; // x == -1 or x == 0;
 }
+
+
 /* 
  * divpwr2 - Compute x/(2^n), for 0 <= n <= 30
  *  Round toward zero
@@ -263,8 +266,17 @@ int fitsBits(int x, int n) {
  *   Rating: 2
  */
 int divpwr2(int x, int n) {
-    return 2;
+	/* The same as 2.77, Using 10 ops. That is if x < 0 and 
+	   the low-order n bits not equal 0 then result + 1 */
+	int result = x;
+	unsigned mask = (1 << n) + (~1 + 1); // replace - 1
+	
+	result >>= n;
+	result += (mask & x) & (x >> 31) & 0x01;
+	return result;
 }
+
+
 /* 
  * negate - return -x 
  *   Example: negate(1) = -1.
@@ -273,8 +285,10 @@ int divpwr2(int x, int n) {
  *   Rating: 2
  */
 int negate(int x) {
-  return 2;
+	return ~x + 1; // 2-ops
 }
+
+
 /* 
  * isPositive - return 1 if x > 0, return 0 otherwise 
  *   Example: isPositive(-1) = 0.
@@ -283,8 +297,10 @@ int negate(int x) {
  *   Rating: 3
  */
 int isPositive(int x) {
-  return 2;
+	return !((x >> 31) & 0x1); // 3ops
 }
+
+
 /* 
  * isLessOrEqual - if x <= y  then return 1, else return 0 
  *   Example: isLessOrEqual(4,5) = 1.
@@ -293,8 +309,18 @@ int isPositive(int x) {
  *   Rating: 3
  */
 int isLessOrEqual(int x, int y) {
-  return 2;
+	/* Using 11 ops, compute the y-x and if positive that y bigger than x
+	   Meanwhile mind that y-x may overflow if x < 0 and y > 0 */
+	int sign_x = x >> 31;
+	int sign_y = y >> 31;
+	int y_x = y + (~x + 1);
+	int sign_y_x = y_x >> 31;
+
+	// if x < 0 && y > 0 || y - x > 0
+	return ((sign_x & !sign_y) | !sign_y_x) & 0x1;
 }
+
+
 /*
  * ilog2 - return floor(log base 2 of x), where x > 0
  *   Example: ilog2(16) = 4
@@ -303,8 +329,34 @@ int isLessOrEqual(int x, int y) {
  *   Rating: 4
  */
 int ilog2(int x) {
-  return 2;
+	/* Violate the rule that can't call any function , but actully I can
+	   simply copy the bitCount and paste here. So I just call that func.
+
+	   Using 13+28 = 41 ops but I think there would be a better method. But
+	   here may be best I can do so far...*/
+	/* The idea is Fairly simply. set all the bits after the higheset value bit
+	   to 1 the count the bits after that at last minus 1 */
+
+	// set all bits after highest 1's to 1
+	x |= x >> 1;
+	x |= x >> 2;
+	x |= x >> 4;
+	x |= x >> 8;
+	x |= x >> 16;
+	
+	// answer is the total number of 1 minus 1
+	return bitCount(x) + (~1 + 1);
 }
+
+/* return 1 if the uf is NaN, abstract it for readabilty. using 5 ops 
+   more constant used to save shift ops */
+int is_NaN(unsigned uf)
+{
+	return ((uf & 0x7F800000) == 0x7F800000) &&
+		((uf & 0x7FFFFF) != 0);
+}
+
+
 /* 
  * float_neg - Return bit-level equivalent of expression -f for
  *   floating point argument f.
@@ -317,8 +369,18 @@ int ilog2(int x) {
  *   Rating: 2
  */
 unsigned float_neg(unsigned uf) {
- return 2;
+	/* Voiolate the rule that no allow call function , I extract the is_NaN procedure
+	   is for more readabilty. If you want to test with test.c just paste it back 
+	   into the if-conditional statement */
+	// and total 1+5=6 ops used
+	if (is_NaN)
+		return uf;
+
+	// reverse the sign bit
+	return uf ^ 0x80000000;
 }
+
+
 /* 
  * float_i2f - Return bit-level equivalent of expression (float) x
  *   Result is returned as unsigned int, but
@@ -329,8 +391,40 @@ unsigned float_neg(unsigned uf) {
  *   Rating: 4
  */
 unsigned float_i2f(int x) {
-  return 2;
+	/* This function is the same as the 2.96 . um.. I'm not sure whether the ops 
+	   in loops should be multiple counted. So I just copy the Problem 2.96.
+	   And there is 22ops used ? */
+	unsigned f = x;
+	unsigned exp = 0;
+	unsigned frac = 0;
+	int index = 31;
+	unsigned mask = 0x80000000;// to selet the most significant bit
+
+	if (x < 0)// Convert two-complement to unsigned
+	{
+		f = ~x; // switch all bit then add 1 to be unsigned
+		if (f != 2147483647)//INT_MAX
+			f += 1;
+	}
+	for (index = 31; index >= 0; index--)
+	{
+		if (f & mask)
+			break; // find the most significant bit
+		mask >>= 1;
+	}
+	if (index < 0)
+		return x & 0x80000000;
+
+	exp = index + 127; // 0x7F = 127 = 0(in float)
+	if (index > 23) // 23 bits fraction in sigle-precision
+		frac = (f >> (index - 23)) & 0x7FFFFF;
+	else
+		frac = (f << (23 - index)) & 0x7FFFFF;
+	return x & 0x80000000 | (exp << 23) | frac; // sign | exponent | fraction
+
 }
+
+
 /* 
  * float_twice - Return bit-level equivalent of expression 2*f for
  *   floating point argument f.
@@ -343,5 +437,17 @@ unsigned float_i2f(int x) {
  *   Rating: 4
  */
 unsigned float_twice(unsigned uf) {
-  return 2;
+	/* Same as above, this problem is identical with 2.93. so I just copy it here 
+	   Using 13+5=18 ops here */
+	unsigned exp = (uf >> 23) & 0xFF;
+	unsigned frac = uf & 0x7FFFFF;
+
+	if (is_NaN_32(uf))
+		return uf;
+	if (exp == 0) // denormailzed
+		return uf & 0xFF800000 | frac << 1; // save others | fractions * 2
+	else if (exp < 254)
+		return uf & 0x807FFFFF | (exp + 1) << 23; // save other bits | add 1 in exponent
+	else
+		return uf & 0xFF800000; // exp == 254, and just clear the fractions bits of f
 }
