@@ -18,9 +18,9 @@ unsigned unsigned_high_prod(unsigned x, unsigned y)
 
 
 	// in the Equation 2.18 (book chapt 2.34)
-	// (x' * y') = [(x +x(w-1) * 2exp w) * (y + y(w-1) * 2exp w)]
-	// so (x' * y') / 2 exp w ( that is to remain high-order) can be conver to as follow
-	return signed_high_prod(x, y) + x_wth * y + y_wth * x + x_wth * y_wth;
+	// (x' * y') = [(x +x(w-1) * 2^w) * (y + y(w-1) * 2^2w)]
+	// so (x' * y') / 2^w ( that is to remain high-order) can be conver to as follow
+	return signed_high_prod(x, y) + x_wth * y + y_wth * x + x_wth * y_wth * (1 << w);
 }
 
 
@@ -84,7 +84,7 @@ int signed_high_prod(int x, int y)
 //	printf("%.2x\n", unsigned_high_prod(ux, ux));
 //}
 //// print 0xffffff00 and 0x1000000
-//// that is -(2^8) (20 +20 - 32) and 2^24 (28 + 28 - 32)
+//// that is -(2^8) (20 +20 - 32) and 2^25 (28 + 28 - 31)
 //// My two founction are not that robust so when you input INT_MIN
 //// in anyone of arguments then the result is wrong :(
 
