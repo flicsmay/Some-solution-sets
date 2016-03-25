@@ -1,4 +1,4 @@
-/* Problems 3.60 - */
+/* Problems 3.60 - 3.70 */
 
 /* 3.60 */
 
@@ -118,8 +118,112 @@
 // and size(a[]) = 20 sizeof(x[]) = 4 is the possible and most reasonable result
 // And CNT = 180/20 = 9
 // Since sizeof(s[]) = 4 we can fill this structure
+
 //struct a_struct
 //{
 //	int idx;
 //	int s[4];
 //};
+
+
+/* 3.67 */
+// A. e1.p: 0, e1.y: 4, e2.x: 0, e2.next: 4;
+// B. 8
+// C. 
+
+//void proc(union ele *up)
+//{
+//	up->e2.next->e1.y = *(up->e2.next->e1.p) - (up->e1.y);
+//}
+// Can be simply deduced form the assmbly code. Far more easier than the last problem...
+
+
+/* 3.68 */
+
+//// It just the basics of the c language. If you want to using fgets(), just remeber to check boundary
+//#include <stdio.h>
+//
+//void good_echo(void)
+//{
+//	int c = 0; // store EOF
+//
+//	while (c = getchar(), c != '\n' && c != EOF) putchar(c);
+//
+//	putchar(10);
+//}
+//
+//
+//int main()
+//{
+//	good_echo();
+//}
+
+
+/* 3.69 */
+
+// A.
+#include <stdio.h>
+#include <limits.h>
+
+typedef struct ELE *tree_ptr;
+
+struct ELE
+{
+	tree_ptr left;
+	tree_ptr right;
+	long val;
+};
+
+long trace(tree_ptr tp)
+{
+	while (tp->left != NULL)
+		tp = tp->left;
+	return tp->val;
+}
+
+// B.
+// return the value of the leftmost subtree.
+
+
+/* 3.70 */
+
+// long traverse(tree_ptr tp);
+
+// tp in %rdi
+//	lines			operations				comments
+//	2		movq	%rbx, -24(%rsp)		; save register
+//	3		movq	%rbp, -16(%rsp)		; 
+//	4		movq	%r12, -8(%rsp)		; 
+//	5		subq	$24, %rsp			; deduct 24 for spaces
+//	6		movq	%rdi, %rbp			; &tp -> rbp // the current tp
+//	7		movabsq $-9223372036854775808, %rax		; LONG_MIN -> rax
+//	8		testq	%rdi, %rdi			; if tp == NULL
+//	9		je		.L9					;	then goto .L9
+//	10		movq	(%rdi), %rbx		; save the current val
+//	11		movq	8(%rdi), %rdi		; tp->left -> rdi // undate rdi 
+//	12		call	traverse			;
+//	13		movq	%rax, %r12			; returnval -> r12
+//	14		movq	16(%rbp), %rdi		; tp->right -> rdi
+//	15		call	traverse			;
+//	16		cmpq	%rax, %r12			; If r12 >= rax
+//	17		cmovge	%r12, %rax			;	then r12 -> rax
+//	18		cmpq	%rbx, %rax			; If rax < rbx
+//	19		cmovl	%rbx, %rax			;	then rbx -> rax
+// That is put the biggest one in right &left return and currentval into the rax.
+//	20	.L9	
+//	21		movq	(%rsp), %rbx		;  retrive register
+//	22		movq	8(%rsp), %rbp		; 
+//	23		movq	16(%rsp), %r12		; 
+//	24		addq	$24, %rsp			; release spaces
+//	25		ret							; return the rax That is the biggest value
+
+// I'm not sure whether the use of lines 2.3.4 & 21.22.23 are to save register or not.
+
+long traverse(tree_ptr tp)
+{
+	if (tp == NULL)
+		return LONG_MIN;
+	return Min(tp->val, traverse(tp->left), traverse(tp->right));
+}
+
+// B. return the smallest value in the tree.
