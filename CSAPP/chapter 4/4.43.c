@@ -66,16 +66,17 @@ void bubble_a(int *data, int count)
 		rrmovl		%ecx, %edx			; save at edx to compare i with last
 		subl		%esi, %edx			; cmp
 		jle			Outer_loop
-		rrmovl		%eax, %edx			;
-		subl		%ebx, %edx			; cmp *p_f with *p_n
+		mrmovl		(%eax), %edx		;
+		mrmovl		(%ebx), %edi		;
+		subl		%edi, %edx			; cmp *p_f with *p_n
 		jle			Skip_exchange
 		rrmovl		%ecx, %edx			; exchange two pointer
 		rrmovl		%ebx, %ecx			;
 		rrmovl		%edx, %ebx			;
 
 	Skip_exchange
-		irmovl		$4, %edi			; add pointers
-		addl		%edi, %eax			;
+		irmovl		$4, %edi			; update pointer and i
+		addl		%edi, %eax			; add pointer
 		addl		%edi, %ebx			;
 		irmovl		$1, %edi			;
 		addl		%edi, %esi			; add 1 to i
@@ -84,3 +85,40 @@ void bubble_a(int *data, int count)
 		leave
 		ret
 */
+
+
+/* 4.46 */
+
+/*
+	The same as the last problems, It is much difficult to solve with so little instr.
+
+	Inner_loop
+		rrmovl		%ecx, %edx			;
+		subl		%esi, %edx			; cmp
+		jle			Outer_loop			;
+		mrmovl		(%eax), %edx		; %edx = *p_f
+		mrmovl		(%ebx), %edi		; %edi = *p_n
+		pushl		%ecx				; save $last & $i on the stack
+		pushl		%esi				;
+		mrmovl		(%eax), %ecx		
+		mrmovl		(%ebx), %esi		;
+		subl		%esi, %ecx			; if *p_f > *p_n
+		cmovl		%edx, %ecx			;	exchange %edx & %ebx
+		cmovl		%edi, %ebx			;
+		cmovl		%ecx, %edi			;
+		popl		%esi				; retrieve $i & $last
+		popl		%ecx
+		rmmovl		%edx, (%eax)		; *p_f = %edx 
+		rmmovl		%edi, (%ebx)		; *p_n = %edi
+
+		irmovl		$4, %edi			;
+		// The same as 4.45 next.
+*/
+
+
+/* 4.47-4.48 */
+/*
+	The two problems is easy enough that everyone can solve it easily with the given guide.
+	And since there two's have too many charcter to type. So I just skip it.
+*/
+
