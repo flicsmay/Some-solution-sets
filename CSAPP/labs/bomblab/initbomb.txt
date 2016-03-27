@@ -1,0 +1,12 @@
+.initialize_bomb
+   0x08049160 <+0>:	push   %ebp
+   0x08049161 <+1>:	mov    %esp,%ebp
+   0x08049163 <+3>:	sub    $0x8,%esp		; esp = esp - 8
+   0x08049166 <+6>:	add    $0xfffffff8,%esp		
+   0x08049169 <+9>:	push   $0x8048f50
+   0x0804916e <+14>:	push   $0x2
+   0x08049170 <+16>:	call   0x8048770 <signal@plt>
+   0x08049175 <+21>:	mov    %ebp,%esp
+   0x08049177 <+23>:	pop    %ebp
+   0x08049178 <+24>:	ret    
+

@@ -1,0 +1,28 @@
+.read_six_numbers
+   0x08048fd8 <+0>:	push   %ebp
+   0x08048fd9 <+1>:	mov    %esp,%ebp
+   0x08048fdb <+3>:	sub    $0x8,%esp
+   0x08048fde <+6>:	mov    0x8(%ebp),%ecx			; ecx = 0x804b6d0
+   0x08048fe1 <+9>:	mov    0xc(%ebp),%edx	; addrs of checked value 0xffffd320
+   0x08048fe4 <+12>:	lea    0x14(%edx),%eax			; 0xffffd334
+   0x08048fe7 <+15>:	push   %eax				; push 8 value in stack
+   0x08048fe8 <+16>:	lea    0x10(%edx),%eax			; 0xffffd334 - 0xffffd320
+   0x08048feb <+19>:	push   %eax				;
+   0x08048fec <+20>:	lea    0xc(%edx),%eax			; 32c
+   0x08048fef <+23>:	push   %eax
+   0x08048ff0 <+24>:	lea    0x8(%edx),%eax			; 328
+   0x08048ff3 <+27>:	push   %eax
+   0x08048ff4 <+28>:	lea    0x4(%edx),%eax			; 324
+   0x08048ff7 <+31>:	push   %eax
+   0x08048ff8 <+32>:	push   %edx				; 320
+   0x08048ff9 <+33>:	push   $0x8049b1b
+   0x08048ffe <+38>:	push   %ecx				; 0x804b6d0
+   0x08048fff <+39>:	call   0x8048860 <sscanf@plt>
+   0x08049004 <+44>:	add    $0x20,%esp
+   0x08049007 <+47>:	cmp    $0x5,%eax
+   0x0804900a <+50>:	jg     0x8049011 <read_six_numbers+57>	; also curcial
+   0x0804900c <+52>:	call   0x80494fc <explode_bomb>
+   0x08049011 <+57>:	mov    %ebp,%esp
+   0x08049013 <+59>:	pop    %ebp
+   0x08049014 <+60>:	ret    
+

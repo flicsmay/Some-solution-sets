@@ -1,0 +1,42 @@
+.strings_not_equal
+   0x08049030 <+0>:	push   %ebp
+   0x08049031 <+1>:	mov    %esp,%ebp
+   0x08049033 <+3>:	sub    $0xc,%esp
+   0x08049036 <+6>:	push   %edi
+   0x08049037 <+7>:	push   %esi
+   0x08049038 <+8>:	push   %ebx				; save register on stack
+   0x08049039 <+9>:	mov    0x8(%ebp),%esi			; esi = 0x804b680
+   0x0804903c <+12>:	mov    0xc(%ebp),%edi			; edi = 0x80497c0
+   0x0804903f <+15>:	add    $0xfffffff4,%esp			; esp = esp-12
+   0x08049042 <+18>:	push   %esi				; pass as parameter
+   0x08049043 <+19>:	call   0x8049018 <string_length>
+   0x08049048 <+24>:	mov    %eax,%ebx			; eax is the length of input
+   0x0804904a <+26>:	add    $0xfffffff4,%esp			; esp = esp-12
+   0x0804904d <+29>:	push   %edi				; pass as paramet
+   0x0804904e <+30>:	call   0x8049018 <string_length>
+   0x08049053 <+35>:	cmp    %eax,%ebx
+   0x08049055 <+37>:	je     0x8049060 <strings_not_equal+48>
+   0x08049057 <+39>:	mov    $0x1,%eax
+   0x0804905c <+44>:	jmp    0x804907f <strings_not_equal+79>
+   0x0804905e <+46>:	mov    %esi,%esi
+   0x08049060 <+48>:	mov    %esi,%edx
+   0x08049062 <+50>:	mov    %edi,%ecx
+   0x08049064 <+52>:	cmpb   $0x0,(%edx)
+   0x08049067 <+55>:	je     0x804907d <strings_not_equal+77>
+   0x08049069 <+57>:	lea    0x0(%esi,%eiz,1),%esi
+   0x08049070 <+64>:	mov    (%edx),%al
+   0x08049072 <+66>:	cmp    (%ecx),%al
+   0x08049074 <+68>:	jne    0x8049057 <strings_not_equal+39>
+   0x08049076 <+70>:	inc    %edx
+   0x08049077 <+71>:	inc    %ecx
+   0x08049078 <+72>:	cmpb   $0x0,(%edx)
+   0x0804907b <+75>:	jne    0x8049070 <strings_not_equal+64>
+   0x0804907d <+77>:	xor    %eax,%eax
+   0x0804907f <+79>:	lea    -0x18(%ebp),%esp
+   0x08049082 <+82>:	pop    %ebx
+   0x08049083 <+83>:	pop    %esi
+   0x08049084 <+84>:	pop    %edi
+   0x08049085 <+85>:	mov    %ebp,%esp
+   0x08049087 <+87>:	pop    %ebp
+   0x08049088 <+88>:	ret    					; if correct eax = 0
+
