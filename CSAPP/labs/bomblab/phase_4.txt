@@ -1,0 +1,29 @@
+.phase_4
+   0x08048ce0 <+0>:	push   %ebp
+   0x08048ce1 <+1>:	mov    %esp,%ebp
+   0x08048ce3 <+3>:	sub    $0x18,%esp
+   0x08048ce6 <+6>:	mov    0x8(%ebp),%edx
+   0x08048ce9 <+9>:	add    $0xfffffffc,%esp		; esp -= 4
+   0x08048cec <+12>:	lea    -0x4(%ebp),%eax
+   0x08048cef <+15>:	push   %eax
+   0x08048cf0 <+16>:	push   $0x8049808
+   0x08048cf5 <+21>:	push   %edx
+   0x08048cf6 <+22>:	call   0x8048860 <sscanf@plt>
+   0x08048cfb <+27>:	add    $0x10,%esp
+   0x08048cfe <+30>:	cmp    $0x1,%eax		; arg == 1 ?
+   0x08048d01 <+33>:	jne    0x8048d09 <phase_4+41>	; curcial jmp0
+   0x08048d03 <+35>:	cmpl   $0x0,-0x4(%ebp)		; arg > 0 ?
+   0x08048d07 <+39>:	jg     0x8048d0e <phase_4+46>	; crucial jmp1
+   0x08048d09 <+41>:	call   0x80494fc <explode_bomb>
+   0x08048d0e <+46>:	add    $0xfffffff4,%esp
+   0x08048d11 <+49>:	mov    -0x4(%ebp),%eax
+   0x08048d14 <+52>:	push   %eax			; pass as arg
+   0x08048d15 <+53>:	call   0x8048ca0 <func4>
+   0x08048d1a <+58>:	add    $0x10,%esp
+   0x08048d1d <+61>:	cmp    $0x37,%eax		; eax == 0x37 ? (55)d
+   0x08048d20 <+64>:	je     0x8048d27 <phase_4+71>	; crucial jmp2
+   0x08048d22 <+66>:	call   0x80494fc <explode_bomb>
+   0x08048d27 <+71>:	mov    %ebp,%esp
+   0x08048d29 <+73>:	pop    %ebp
+   0x08048d2a <+74>:	ret    
+

@@ -1,0 +1,29 @@
+.func4
+   0x08048ca0 <+0>:	push   %ebp
+   0x08048ca1 <+1>:	mov    %esp,%ebp
+   0x08048ca3 <+3>:	sub    $0x10,%esp
+   0x08048ca6 <+6>:	push   %esi
+   0x08048ca7 <+7>:	push   %ebx
+   0x08048ca8 <+8>:	mov    0x8(%ebp),%ebx		; get arg
+   0x08048cab <+11>:	cmp    $0x1,%ebx		; if arg <= 1 then eax = 1
+   0x08048cae <+14>:	jle    0x8048cd0 <func4+48>
+   0x08048cb0 <+16>:	add    $0xfffffff4,%esp
+   0x08048cb3 <+19>:	lea    -0x1(%ebx),%eax		; eax = arg-1
+   0x08048cb6 <+22>:	push   %eax			; arg_in1 = eax
+   0x08048cb7 <+23>:	call   0x8048ca0 <func4>
+   0x08048cbc <+28>:	mov    %eax,%esi		; esi = ret val
+   0x08048cbe <+30>:	add    $0xfffffff4,%esp
+   0x08048cc1 <+33>:	lea    -0x2(%ebx),%eax		; eax = arg-2
+   0x08048cc4 <+36>:	push   %eax			; arg_in2 = eax
+   0x08048cc5 <+37>:	call   0x8048ca0 <func4>
+   0x08048cca <+42>:	add    %esi,%eax		; eax += esi
+   0x08048ccc <+44>:	jmp    0x8048cd5 <func4+53>
+   0x08048cce <+46>:	mov    %esi,%esi
+   0x08048cd0 <+48>:	mov    $0x1,%eax		; eax = 1 
+   0x08048cd5 <+53>:	lea    -0x18(%ebp),%esp
+   0x08048cd8 <+56>:	pop    %ebx
+   0x08048cd9 <+57>:	pop    %esi
+   0x08048cda <+58>:	mov    %ebp,%esp
+   0x08048cdc <+60>:	pop    %ebp
+   0x08048cdd <+61>:	ret    
+
