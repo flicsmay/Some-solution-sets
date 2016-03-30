@@ -58,38 +58,39 @@
    0x08048e24 <+140>:	jge    0x8048e38 <phase_6+160>
    0x08048e26 <+142>:	mov    (%edx,%ecx,1),%eax	; eax = addr[edi]
    0x08048e29 <+145>:	lea    0x0(%esi,%eiz,1),%esi	; eiz = 0, nop
-
+; goto specific space
    0x08048e30 <+152>:	mov    0x8(%esi),%esi		; esi = esi[2]
    0x08048e33 <+155>:	inc    %ebx			; ebx++
-   0x08048e34 <+156>:	cmp    %eax,%ebx		; ebx < 4 ?
+   0x08048e34 <+156>:	cmp    %eax,%ebx		; ebx < addr[edi] ?
    0x08048e36 <+158>:	jl     0x8048e30 <phase_6+152>
 
    0x08048e38 <+160>:	mov    -0x3c(%ebp),%edx		;
-   0x08048e3b <+163>:	mov    %esi,(%edx,%edi,4)	; ed
+   0x08048e3b <+163>:	mov    %esi,(%edx,%edi,4)	; edx[edi] = esi
    0x08048e3e <+166>:	inc    %edi			; edi++
    0x08048e3f <+167>:	cmp    $0x5,%edi		; edi <= 5 ?
    0x08048e42 <+170>:	jle    0x8048e10 <phase_6+120>
 ;back to outerloop
 
-   0x08048e44 <+172>:	mov    -0x30(%ebp),%esi		; should be 0xf7fbac20
-   0x08048e47 <+175>:	mov    %esi,-0x34(%ebp)		; 
+   0x08048e44 <+172>:	mov    -0x30(%ebp),%esi		; be changed by upper loop
+   0x08048e47 <+175>:	mov    %esi,-0x34(%ebp)		; mov ebp-30 to ebp-34
    0x08048e4a <+178>:	mov    $0x1,%edi		; edi = 1
-   0x08048e4f <+183>:	lea    -0x30(%ebp),%edx		;
-
+   0x08048e4f <+183>:	lea    -0x30(%ebp),%edx		; edx = ebp-0x30
+;loop3
    0x08048e52 <+186>:	mov    (%edx,%edi,4),%eax	; eax = edx[edi]
-   0x08048e55 <+189>:	mov    %eax,0x8(%esi)		
-   0x08048e58 <+192>:	mov    %eax,%esi
-   0x08048e5a <+194>:	inc    %edi
+   0x08048e55 <+189>:	mov    %eax,0x8(%esi)		; esi[2] = edx[edi]
+   0x08048e58 <+192>:	mov    %eax,%esi		; esi = edx[edi]
+   0x08048e5a <+194>:	inc    %edi			; edi++
    0x08048e5b <+195>:	cmp    $0x5,%edi		; edi <= 5 ?
    0x08048e5e <+198>:	jle    0x8048e52 <phase_6+186>
+;bk to loop3
 
-   0x08048e60 <+200>:	movl   $0x0,0x8(%esi)		; 
+   0x08048e60 <+200>:	movl   $0x0,0x8(%esi)		; ebp[-0x18] = 0, esi = ebp[-0x20]
    0x08048e67 <+207>:	mov    -0x34(%ebp),%esi		; esi = 
    0x08048e6a <+210>:	xor    %edi,%edi		; edi = 0
    0x08048e6c <+212>:	lea    0x0(%esi,%eiz,1),%esi	; nop
-
-   0x08048e70 <+216>:	mov    0x8(%esi),%edx		; 
-   0x08048e73 <+219>:	mov    (%esi),%eax		;
+;loop4
+   0x08048e70 <+216>:	mov    0x8(%esi),%edx		; edx = (esi[2]) in memory
+   0x08048e73 <+219>:	mov    (%esi),%eax		; 
    0x08048e75 <+221>:	cmp    (%edx),%eax		; cmp esi[2] <= esi[0]
    0x08048e77 <+223>:	jge    0x8048e7e <phase_6+230>	
    0x08048e79 <+225>:	call   0x80494fc <explode_bomb>
@@ -97,6 +98,7 @@
    0x08048e81 <+233>:	inc    %edi			; edi++
    0x08048e82 <+234>:	cmp    $0x4,%edi		; edi <= 4 ?
    0x08048e85 <+237>:	jle    0x8048e70 <phase_6+216>
+;bk to loop4
 
    0x08048e87 <+239>:	lea    -0x58(%ebp),%esp
    0x08048e8a <+242>:	pop    %ebx
