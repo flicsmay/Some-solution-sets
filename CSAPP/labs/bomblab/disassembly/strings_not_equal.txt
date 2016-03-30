@@ -1,4 +1,6 @@
 .strings_not_equal
+; get two args and cmp whether the two's chara is equal or not 
+; if two strings are identical return 0 in eax.
    0x08049030 <+0>:	push   %ebp
    0x08049031 <+1>:	mov    %esp,%ebp
    0x08049033 <+3>:	sub    $0xc,%esp

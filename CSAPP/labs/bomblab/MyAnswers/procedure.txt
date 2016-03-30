@@ -1,0 +1,85 @@
+Problem 1 :
+
+This problem is not that difficult. The only thing diffcult is to adapt to the GDB environment.
+Notice the function called in <+12> in phase_1, the name is 'string_not_equal' and what the 
+function does it actually the same as it's name.
+And you can see it pass a strange number in to the function.
+Then you can easily deduce the number is the address of the compared string.
+Then If you are using GDB, type 'x/20cd 0x80497c0' which is used for echo the spectific address's value.
+/* 'x/[quantity][type][width] [address]' search in google for more detial */
+And the outcome is what it print out is actually the key.
+
+
+
+Problem 2
+
+// I get stuck here for hours for wanted to finger out what the procedure 'sscanf' does.
+// But it actually is the scanf...
+This problem is a bit more diffcult than phase1. Similar to before is call a function
+named 'read_six_number' and it's name is exactly what it does. You can easily deduce that
+the -18(%ebp) is used to keep the input numbers. // the stack go down 0x18 = 24 = 4bytes * 6
+Then you will see the frist number should be 1 .<+38>
+And there is a loop between <+46> and <+65> examine the codes and you will find that it's a
+procedure to calculate 6! and the input numbers are n!. // notice that it mutiply ebx++ every times
+
+
+
+
+Problem 3
+
+You can see function phase_3 call 'sscanf' which will take three args and the frist check is
+the number of val that return. Then you can easily recognize that it is a switch condition pro
+So it's clear enough that <+62> is a jump table. Using 'x/8w 0x80497e8' you can see the jump destination.
+And I believe that every one of conditions can reach the goal. Though I have only tried one of them.
+So, you should select one of them, and change next two argments according to which branch seleted.
+e.g. branch 0 be selected and you should set args to be 0x77 and 0x309.// and that is what I done.
+
+
+
+Problem 4
+
+This problem has call 'func4'. Examine func4 and you will find that it's a recursive procedure.
+And this procedure is faily easy to understand which is actually the Fibonacci sequence.
+So this problem is asking you which number of F(n) equal to 55. And that is the answer.
+
+
+
+Problem 5
+
+It seem to that the problem is very similar to phase_1, but it actually make a change.
+You print the address out find that it's 'grants', you input grants and it give you a mistaken.
+That's because it change your input in the middle of function. 
+Fristly, the input numbers' quantity must be 6. There is a loop and a address there which is very
+strange. Type 'x/16cd 0x804b220 <+38> and you will see sth like below
+	0x804b220:	105 'i'	115 's'	114 'r'	118 'v'	101 'e'	97 'a'	119 'w'	104 'h'
+	0x804b228:	111 'o'	98 'b'	112 'p'	110 'n'	117 'u'	116 't'	102 'f'	103 'g'
+examine codes in the loop you can deduce that it select character by the low 4bits of input // &0xf & %al <+46>
+so take characters 'g' 'r' 'a' 'n' 't' 's' out need the identicial low-order 4bits with chara index
+In order to cover the original space the value should add 0x16 // as space = ebp+8 and ecx = ebp-8
+
+
+
+Problem 6
+
+// It is actually the most diffcult one and take me more than a whole day to solve it. //which almost make me crazy
+// Maybe I'm too dumb for this ...
+This is a rather long procedure with lots of codes, but you can still finger out what it has done.
+Fristly, you need input exactly 6 numbers, and in the frist loop it will check you input,
+only pass when all your 6 inputs are between 1 to 6.
+The second loop is to take address from spectific spaces. // Er.. it take me long times to recognize it.
+
+(gdb) x/18xw 0x804b230
+0x804b230 <node6>:		0x000001b0	0x00000006	0x00000000	0x000000d4
+0x804b240 <node5+4>:	0x00000005	0x0804b230	0x000003e5	0x00000004
+0x804b250 <node4+8>:	0x0804b23c	0x0000012d	0x00000003	0x0804b248
+0x804b260 <node2>:		0x000002d5	0x00000002	0x0804b254	0x000000fd
+0x804b270 <node1+4>:	0x00000001	0x0804b260
+
+0 : 0xfd		1 : 0x2d5		2 : 0x12d	
+3 : 0x3e5		4 : 0xd4		5 : 0x1b0
+
+And this is what the second loop does. it acquire the address which is according to you inputed number.
+As the address contain value. It can make compare and that's what the loop3 and loop4 do.
+In the loop4 we can see that the comparement is greater and equal. So eventually we can draw
+a concultion that the orders of those numbers is rank by the address's value from greater to smaller .
+And that the answer. //(4 2 6 3 1 5) rank the upper value then add 1 to all index.
