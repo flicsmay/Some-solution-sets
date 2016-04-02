@@ -1,0 +1,93 @@
+/* Problems 5.15 */
+
+
+/* 5.15 */
+
+/*
+	A. omit the diagram. It's easy to draw it out with the figures 5.13 on book
+	B. floating-point add-op is the critical path (and CPE equal to 3.00)
+	C. Two load-ops and a add-op. (CPE 3.00) (load-op can't parallel in 5.12.1)
+	   but actually I'm not sure whether or not the add-op can be parallel with load-ops.
+	D. Because the floating-point multiplication can parallel operation while the add-op
+	   must be wait until the last add-op finished.
+*/
+
+
+/* 5.16 */
+
+
+/* Accumulate in temporary */
+void inner4(vec_ptr u, ver_ptr v, data_t *dest)
+{
+	long int i;
+	int length = vec_length(u);
+	data_t *udata = get_vec_start(u);
+	data_t *vdate = get_vec_start(v);
+	data_t sum = (data_t) 0;
+	
+	for (i = 0; i < length; i += 4)
+	{
+		sum += udata[i] * vdate[i];
+		sum += udata[i+1] * vdate[i+2];
+		sum += udata[i+3] * vdate[i+3];
+		sum += udata[i+4] * vdate[i+4];
+	}
+	
+	/* calculate the remained value */
+	for (; i < length; i++)
+	{
+		sum0 +=  udata[i] * vdate[i];
+	}
+	*dest = sum0;
+}
+
+/*
+	A. Because it needs two load-ops and that's the restriction.
+	B. There are 4 floating-point add-ops in the critical path.
+	   So it won't be less than 3.00.
+*/
+
+
+/* 5.17 */
+
+/* Accumulate in temporary */
+void inner4(vec_ptr u, ver_ptr v, data_t *dest)
+{
+	long int i;
+	int length = vec_length(u);
+	data_t *udata = get_vec_start(u);
+	data_t *vdate = get_vec_start(v);
+	data_t sum0 = (data_t) 0;
+	data_t sum1 = (data_t) 0;
+	data_t sum2 = (data_t) 0;
+	data_t sum3 = (data_t) 0;
+	
+	/* the numbers of resiger should be enough in x86-64 */
+	for (i = 0; i < length; i += 4)
+	{
+		sum0 += udata[i] * vdate[i];
+		sum1 += udata[i+1] * vdate[i+2];
+		sum2 += udata[i+3] * vdate[i+3];
+		sum3 += udata[i+4] * vdate[i+4];
+	}
+	sum0 += sum1 + sum2 + sum3;
+	
+	/* calculate the remained value */
+	for (; i < length; i++)
+	{
+		sum0 +=  udata[i] * vdate[i];
+	}
+	*dest = sum0;
+}
+
+/*
+	A. Needs two load-ops so CPE must greater than 2. (chapter 5.12.1)
+	B. There are only 6 usable registers in IA32 and registers spilling make procedure slower
+*/
+
+
+/* 5.18 */
+// I think it's actually the same question as the upper.
+
+
+/* 5.19 */
