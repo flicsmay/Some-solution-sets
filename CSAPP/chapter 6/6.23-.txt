@@ -1,0 +1,114 @@
+/*********** Problems 6.23 - *************/
+
+
+/*********** 6.23 ***********/
+/*
+	The equation can be writen as C = 2 * pi *(x*r) * r (1-x)
+	-> C = 2*pi*r^2 *x(1-x) when x = 0.5, maximizes the capacity.
+*/
+
+
+/*********** 6.24 ***********/
+/*
+	T avg rotation 	= 1/2 * T max rotation
+					= 1/2 * (60secs/15,000RPM) * 1000ms/sec
+					= 2 ms
+	T avg transfer 	= 60/15,000RPM * 1/800 sectors/track * 1000ms/sec
+					= 0.005 ms
+	T assess 		= T avg seek + T avg rotation + T avg transfer
+					= 9ms + 2ms + 0.005ms
+					= 11.005 ms
+*/
+
+
+/*********** 6.25 ************/
+/*
+	As 2MB = 2048 KB = 2048 * 1024 Byte, And sector size = 512 byte
+	Thus it needs 4096 sectors that is 5 tracks. 
+	A. The Best cast: ALL sectors are adjacent.
+		T 	= T avg seek + T avg rotation + 4 * T max rotation + 96 * T avg transfer
+			= 4ms + 2ms + 4 * 4ms + 96 * 0.004ms
+			= 22.384ms
+	B. Random case :
+		T	= 4096 * (T avg seek + T avg rotation)
+			= 24576ms
+*/
+
+
+/*********** 6.26 ************/
+/*
+	Cache	m 	C 		B 	E 			S		t		s 		b 
+	1.		32	1024	4	4			64		24		6		2
+	2.		32	1024	4 	256			4		28		2		2
+	3.		32 	1024  	8 	1			1024	19		10		3
+	4. 		32 	1024 	8 	128			8		26		3		3
+	5. 		32 	1024 	32 	1			1024	17		10		5
+	6.		32 	1024 	32 	4 			64		21		6		5
+*/
+
+
+/********** 6.27 **************/
+/*
+	Only fill the empty
+	1. 2048		256
+	2. 4		4
+	3. 24		7
+	4. 32		5
+*/
+
+
+/********** 6.28 - 6.29 ************/
+/*
+	assume sets from 0 to 7
+	
+	A. 0x08A4 - 0x08A7 & 0x0704 - 0x0707
+	B. 0x1238 - 0x123B
+	
+	A. N/A
+	B. 0x18F0 - 0x18F3 & 0x00B0 - 0x00B3
+	C. 0x0E34 - 0x0E37
+	D. 0x1BDC - 0x1BDF
+*/
+
+
+/************ 6.30 **************/
+/*
+	A. CT : 2 bytes 	CI : 2 bits 	CO : 2 bits
+	B. 	NO		unknown
+		YES		unknown
+		YES		0x03
+*/
+
+
+/************ 6.31 ***************/
+/*
+	A. 128
+	B. CT : 2 bytes 	CI : 3 bits		CO : 2 bits
+*/
+
+
+/************* 6.32 **************/
+/*
+	A. 0011100011010
+	B. 	0x2		0x6		0x38	Y	0xEB
+*/
+
+
+/*************6.33***************/
+/*
+	A. 1011011101000
+	B. 	0x0		0x2 	0xB7	N	unknown
+*/
+
+
+/**************6.34***************/
+/*
+	0x1788 - 0x178B (4)
+	0x16C8 - 0x16CB	(4)
+*/
+
+
+/**************6.35***************/
+/*
+	
+
