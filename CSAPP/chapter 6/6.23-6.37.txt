@@ -1,4 +1,6 @@
-/*********** Problems 6.23 - *************/
+/**************************************** 
+ ******  Problems 6.23 - 6.37 **********
+ ***************************************/
 
 
 /*********** 6.23 ***********/
@@ -110,5 +112,28 @@
 
 /**************6.35***************/
 /*
-	
+				dst array							src array
+		col0	col1	col2	col3	|	col0	col1	col2	col3
+row0	m		m		m		m		|	m 		m		h		m
+row1	m		m		m		m		|	m		h		m		h
+row2	m		m		m		m		|	m		m		h		m
+row3	m		m		m		m		|	m		h		m		h
+*/
 
+
+/**************6.36****************/
+/*
+	128 bytes can cover all the arrays.
+	So, both dst array and scr array frist column miss.
+	the others cols hit.
+*/
+
+
+/**************6.37*****************/
+/*
+	A. 100%
+	B. 25%	(there are only cold-miss)
+	C. 25%	(cold miss)
+	D. No, because there are only cold miss.
+	E. Yes, larger block size can reduce it's cold miss rate.
+*/
