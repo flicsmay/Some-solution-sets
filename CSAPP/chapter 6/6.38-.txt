@@ -1,0 +1,47 @@
+/*******************************
+ * Problems 6.38 -
+ ********************************/
+ 
+ /****************6.38******************/
+ /*
+	I have writen a test program for this problem
+	in test_for_6.38.c
+	here is what the program print
+			N = 64			N = 60
+	sumA	0.25			0.25
+	sumB	1.00			1.00
+	sumC	1.00			0.50
+*/
+
+
+/************6.39 - 6.41******************/
+/*
+	I have writen a test program for those problems
+	In test_for_6.39-6.41.c
+	6.39
+	writen		:	1024
+	miss		:	63
+	miss rate	:	0.062
+	6.40
+	writen		:	1024
+	miss		:	255
+	miss rate	:	0.249
+	6.41
+	writen		:	1024
+	miss		:	127
+	miss rate	:	0.124
+*/
+
+
+/************6.42 - 6.44****************/
+/*
+	6.42 6.43 	: 25% // 4 bytes block only occur cold miss
+	6.44		: 100%	// write in a 4 bytes block and miss every times
+*/
+
+
+/* omit 6.45 */
+
+/*****************6.46********************/
+/* 
+	
