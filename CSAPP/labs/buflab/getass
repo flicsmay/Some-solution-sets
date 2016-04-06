@@ -1,0 +1,3 @@
+FILE=level2
+gcc -m32 -c $FILE.s
+objdump -d $FILE.o > disa$FILE.txt

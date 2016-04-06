@@ -479,21 +479,23 @@ Disassembly of section .text:
 
 08048daa <test>:
  8048daa:	55                   	push   %ebp
- 8048dab:	89 e5                	mov    %esp,%ebp
+ 8048dab:	89 e5                	mov    %esp,%ebp	; 0x55683b00 <_r+1039104>
  8048dad:	53                   	push   %ebx
  8048dae:	83 ec 24             	sub    $0x24,%esp
- 8048db1:	e8 da ff ff ff       	call   8048d90 <uniqueval>
- 8048db6:	89 45 f4             	mov    %eax,-0xc(%ebp)
- 8048db9:	e8 36 04 00 00       	call   80491f4 <getbuf>
+ 8048db1:	e8 da ff ff ff       	call   8048d90 <uniqueval>; in ebp-0xc 
+ 8048db6:	89 45 f4             	mov    %eax,-0xc(%ebp)	; 0x55683af4 <_r+1039092>
+ 8048db9:	e8 36 04 00 00       	call   80491f4 <getbuf>	; 0x55683aa8 <_r+1039016>
  8048dbe:	89 c3                	mov    %eax,%ebx
  8048dc0:	e8 cb ff ff ff       	call   8048d90 <uniqueval>
  8048dc5:	8b 55 f4             	mov    -0xc(%ebp),%edx
- 8048dc8:	39 d0                	cmp    %edx,%eax
+
+ 8048dc8:	39 d0                	cmp    %edx,%eax	; if local != uniq	
  8048dca:	74 0e                	je     8048dda <test+0x30>
  8048dcc:	c7 04 24 88 a3 04 08 	movl   $0x804a388,(%esp)
  8048dd3:	e8 e8 fa ff ff       	call   80488c0 <puts@plt>
  8048dd8:	eb 46                	jmp    8048e20 <test+0x76>
- 8048dda:	3b 1d 08 d1 04 08    	cmp    0x804d108,%ebx
+
+ 8048dda:	3b 1d 08 d1 04 08    	cmp    0x804d108,%ebx	; %ebx == cookie ? 
  8048de0:	75 26                	jne    8048e08 <test+0x5e>
  8048de2:	89 5c 24 08          	mov    %ebx,0x8(%esp)
  8048de6:	c7 44 24 04 2a a5 04 	movl   $0x804a52a,0x4(%esp)
@@ -504,11 +506,13 @@ Disassembly of section .text:
  8048e01:	e8 75 05 00 00       	call   804937b <validate>
  8048e06:	eb 18                	jmp    8048e20 <test+0x76>
  8048e08:	89 5c 24 08          	mov    %ebx,0x8(%esp)
- 8048e0c:	c7 44 24 04 47 a5 04 	movl   $0x804a547,0x4(%esp)
+
+ 8048e0c:	c7 44 24 04 47 a5 04 	movl   $0x804a547,0x4(%esp)	; ELSE
  8048e13:	08 
  8048e14:	c7 04 24 01 00 00 00 	movl   $0x1,(%esp)
  8048e1b:	e8 a0 fb ff ff       	call   80489c0 <__printf_chk@plt>
- 8048e20:	83 c4 24             	add    $0x24,%esp
+
+ 8048e20:	83 c4 24             	add    $0x24,%esp	; END
  8048e23:	5b                   	pop    %ebx
  8048e24:	5d                   	pop    %ebp
  8048e25:	c3                   	ret    
@@ -765,7 +769,7 @@ Disassembly of section .text:
  80491dd:	83 c3 01             	add    $0x1,%ebx
  80491e0:	39 fb                	cmp    %edi,%ebx
  80491e2:	7c e2                	jl     80491c6 <main+0x1c0>
- 80491e4:	b8 00 00 00 00       	mov    $0x0,%eax
+ 80491e4:	b8 00 00 00 00       	mov    $0x0,%eax0x08048dbe
  80491e9:	8d 65 f4             	lea    -0xc(%ebp),%esp
  80491ec:	5b                   	pop    %ebx
  80491ed:	5e                   	pop    %esi
@@ -776,11 +780,11 @@ Disassembly of section .text:
  80491f2:	90                   	nop
  80491f3:	90                   	nop
 
-080491f4 <getbuf>:
- 80491f4:	55                   	push   %ebp
- 80491f5:	89 e5                	mov    %esp,%ebp
- 80491f7:	83 ec 38             	sub    $0x38,%esp
- 80491fa:	8d 45 d8             	lea    -0x28(%ebp),%eax
+080491f4 <getbuf>:	; 0x55683ad0 <_reserved+1039056>: 0x55683b00 before
+ 80491f4:	55                   	push   %ebp	; 0x55683ad0 <_r+1039056> cur
+ 80491f5:	89 e5                	mov    %esp,%ebp; 
+ 80491f7:	83 ec 38             	sub    $0x38,%esp	; 
+ 80491fa:	8d 45 d8             	lea    -0x28(%ebp),%eax	; buff here.
  80491fd:	89 04 24             	mov    %eax,(%esp)
  8049200:	e8 f5 fa ff ff       	call   8048cfa <Gets>
  8049205:	b8 01 00 00 00       	mov    $0x1,%eax
