@@ -1,0 +1,11 @@
+
+level4.o:     file format elf32-i386
+
+
+Disassembly of section .text:
+
+00000000 <.text>:
+   0:	bb 1d fd 3d 7e       	mov    $0x7e3dfd1d,%ebx
+   5:	b9 6a 8e 04 08       	mov    $0x8048e6a,%ecx
+   a:	51                   	push   %ecx
+   b:	c3                   	ret    
