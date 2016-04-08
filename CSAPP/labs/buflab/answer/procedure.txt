@@ -1,0 +1,42 @@
+**********************************
+* procedure to the bufbomb lab ***
+**********************************
+
+**************level0*******************
+	Level0 is a rather easy problem after you have get the idea
+of what this problem is talking about.
+	Frist using objdump (or gdb whatever you like) to get the address of the
+objective function then exploit the overflow of the gets to change the return
+address of getbuf(). With that you can call arbitrarily func you want.
+
+
+**************level1*******************
+	The only different between lv0 and lv1 is that lv1 need to pass
+a argument and It usually in %ebp+8, %ebp+c ... (%ebp+4 is the return add)
+You can take a glance at the disassembly.
+
+
+**************level2*******************
+	In level2 you should insert your exploit codes in to the stack
+To do this you have to set the return address to the stack, then the
+procedure will excute your codes. I insert the codes in the top of the 
+stack which is to set global value to my ID, and change the return addr.
+You should write some assmbly and disassembe it to get correct machine
+codes. But there are a question that when I return to some specifi addr
+it refuse me with a address error, and I don't know why. However you 
+should notice that you should never try to use 'call' or 'jmp' as it
+would return a error instead you should push an addr and 'ret'.
+
+
+**************level3*******************
+	This problem is the same as lv2 and nothing improtance to say.
+	
+**************level4*******************
+	This problem tell us the mechanism that modern computer used to 
+avoid stack attrack. The thing you should know that is the virtual address
+of .text is unchange but the stack addresses change. So you can still
+call a func if you catch the procedure. A trick is to insert a long set of 
+nop in to the stack and the opportunity to catch the codes is much bigger.
+(which have mention both in book and the lab handout) And Fortunatly we
+have 500 addrs to insert our codes and with small stack thrashing. Once
+you get it the problem is ready to solve. (But still take me lots of time ..)

