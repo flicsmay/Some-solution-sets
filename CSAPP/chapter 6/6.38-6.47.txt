@@ -43,7 +43,68 @@
 
 /* omit 6.45 */
 
-/**************6.46 - 6.47********************/
-/* I actually have totally no idea how to deal with it.
-   so I just skip it and may turn back sometimes. */
+/****************** 6.46 ********************/
+/*
+	void transpose(int *dst, int *src, int dim)
+	{
+		int i, j;
+		
+		for (i = 0; i < dim-8; i+=8)
+			for (j = 0; j < dim; j++)
+			{
+				/* unrolling to reach better locality */
+				dst[j*dim + i] = scr[i*dim + j];
+				dst[j*dim + i+1] = scr[(i+1)*dim + j];
+				dst[j*dim + i+2] = scr[(i+2)*dim + j];
+				dst[j*dim + i+3] = scr[(i+3)*dim + j];
+				dst[j*dim + i+4] = scr[(i+4)*dim + j];
+				dst[j*dim + i+5] = scr[(i+5)*dim + j];
+				dst[j*dim + i+6] = scr[(i+6)*dim + j];
+				dst[j*dim + i+7] = scr[(i+7)*dim + j];
+			}
+		for (; i < dim; i++)
+			for (j = 0; j < dim; j++)
+				dst[j*dim + i] = src[i*dim + j];
+	}
+*/
+
+
+/***************** 6.47 *******************/
+/*
+	void col_convert(int *G, int dim)
+	{
+		int i, j;
+		
+		for (i = 0; i < dim-8; i+=8)
+			for (j = 0; j < dim - i; j++)
+			{
+				G[j*dim + i] = G[i*dim + j] = G[j*dim + i] || G[i*dim + j];
+				G[j*dim + i+1] = G[(i+1)*dim + j] = G[j*dim +i+1] || G[(i+1)*dim + j];
+				G[j*dim + i+2] = G[(i+2)*dim + j] = G[j*dim +i+2] || G[(i+2)*dim + j];
+				G[j*dim + i+3] = G[(i+3)*dim + j] = G[j*dim +i+3] || G[(i+3)*dim + j];
+				G[j*dim + i+4] = G[(i+4)*dim + j] = G[j*dim +i+4] || G[(i+4)*dim + j];
+				G[j*dim + i+5] = G[(i+5)*dim + j] = G[j*dim +i+5] || G[(i+5)*dim + j];
+				G[j*dim + i+6] = G[(i+6)*dim + j] = G[j*dim +i+6] || G[(i+6)*dim + j];
+				G[j*dim + i+7] = G[(i+7)*dim + j] = G[j*dim +i+7] || G[(i+7)*dim + j];
+			}
+		for (; i < dim; i++)
+			for (j = 0; j < dim-i; j++)
+				G[j*dim + i] = G[i*dim + j] = G[j*dim + i] || G[i*dim + j];
+	}
+*/
+// have not been test, not sure whether it's correct or not
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
