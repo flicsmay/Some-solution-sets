@@ -1,0 +1,43 @@
+Teamname: flicsmay
+Member 1: lee
+Email 1: flicsmay@163.com
+
+Rotate: Version = naive_rotate: Naive baseline implementation:
+Dim		64	128	256	512	1024	Mean
+Your CPEs	9.6	13.6	20.6	39.2	47.9
+Baseline CPEs	14.7	40.1	46.4	65.9	94.5
+Speedup		1.5	2.9	2.3	1.7	2.0	2.0
+
+Rotate: Version = rotate: unrolling by 4:
+Dim		64	128	256	512	1024	Mean
+Your CPEs	10.1	14.1	22.4	39.0	47.8
+Baseline CPEs	14.7	40.1	46.4	65.9	94.5
+Speedup		1.5	2.8	2.1	1.7	2.0	2.0
+
+Rotate: Version = rotate: transpose method and unrolling by 4:
+Dim		64	128	256	512	1024	Mean
+Your CPEs	16.8	17.0	17.3	23.6	28.9
+Baseline CPEs	14.7	40.1	46.4	65.9	94.5
+Speedup		0.9	2.4	2.7	2.8	3.3	2.2
+
+Rotate: Version = rotate: transpose method and unrolling by 8:
+Dim		64	128	256	512	1024	Mean
+Your CPEs	15.9	8.9	16.7	20.4	24.7
+Baseline CPEs	14.7	40.1	46.4	65.9	94.5
+Speedup		0.9	4.5	2.8	3.2	3.8	2.7
+
+Smooth: Version = smooth: Current working version:
+Dim		32	64	128	256	512	Mean
+Your CPEs	237.5	147.5	148.0	142.9	145.8
+Baseline CPEs	695.0	698.0	702.0	717.0	722.0
+Speedup		2.9	4.7	4.7	5.0	5.0	4.4
+
+Smooth: Version = naive_smooth: Naive baseline implementation:
+Dim		32	64	128	256	512	Mean
+Your CPEs	228.0	231.6	236.4	241.8	244.1
+Baseline CPEs	695.0	698.0	702.0	717.0	722.0
+Speedup		3.0	3.0	3.0	3.0	3.0	3.0
+
+Summary of Your Best Scores:
+  Rotate: 2.7 (rotate: transpose method and unrolling by 8)
+  Smooth: 4.4 (smooth: Current working version)

@@ -249,15 +249,18 @@ void avg_board(int dim, pixel *src, pixel *dst)
 {
     int i, j;
     pixel_sum tmp0, tmp1, tmp2, tmp3, tmp4, tmp5;
-
+	
+	/* handle the first line */
     for (j = 0; j < dim; j++)
         dst[RIDX(0, j, dim)] = avg(dim, 0, j, src);
-
+	
     for (i = 1; i < dim-1; i++)
-    {
+    {	
+		/* frist element in the row */
         dst[RIDX(i, 0, dim)] = avg(dim, i, 0, src);
         for (j = 1; j < dim-4; j+=4)
         {
+			/* using temp val to eliminate multiply calculation */
             tmp0 = avg_col3(dim, i, j-1, src);
             tmp1 = avg_col3(dim, i, j, src);
             tmp2 = avg_col3(dim, i, j+1, src);
@@ -269,10 +272,12 @@ void avg_board(int dim, pixel *src, pixel *dst)
             dst[RIDX(i, j+2, dim)] = avg_9(&tmp2, &tmp3, &tmp4);
             dst[RIDX(i, j+3, dim)] = avg_9(&tmp3, &tmp4, &tmp5);
         }
+		/* remaining elems in the row */
         for (; j < dim; j++)
             dst[RIDX(i, j, dim)] = avg(dim, i, j, src);
 
     }
+	/* the very last line */
     for (j = 0; j < dim; j++)
         dst[RIDX(dim-1, j, dim)] = avg(dim, dim-1, j, src);
 }

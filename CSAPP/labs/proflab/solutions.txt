@@ -1,0 +1,38 @@
+*****************************************
+****solutions for proflab in CS:APP *****
+*****************************************
+
+**************FILES****************
+
+kernels.c -> my solutions to this problem
+result.txt -> run-time perfo of my works
+
+**************
+
+I think it is still much away far to reach the limitation of meachine performance. 
+Maybe I will come up with a better idea and turn back to fix this problem.
+
+**************
+
+
+***************problem 1*****************
+
+	As been writen in the hand-out, the counter-clockwise rotation can be transfer
+to two step : transpose and rows exchange, which make it easier to write a better
+locality program.
+
+	I write a unrolling by4 procedure but it seem no to perfor well than the orignal
+one. Then I write another two proces which are using the uppre technique, and it 
+seem to better in a large N but still slow in a small N. (I'm wondering whether or not
+it may perfo better without using marco RIDX) Beside, I have use some tech to reach
+better locality.
+
+
+***************problem 2******************
+
+	This problem is a bit more intricacy than problem 1, I partition the space into
+2 parts, the middle (dim-1)*(dim-1) is a part and others is another part. It eliminate
+the num count and two cmp proceds. For convenient I directly call the navie_ver to 
+fill the remain spaces. Meanwhile I have used a add_col3 to eliminate multiple times
+calculation(which I don't know whether it's worth or not). And I'm quite sure it make
+resiger spilling...
