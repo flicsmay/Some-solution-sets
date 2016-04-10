@@ -1,0 +1,54 @@
+ /***********************************
+  ****problems 7.6 -
+  **********************************/
+ 
+ 
+ /****************7.6******************/
+ 
+ Symbol|sp.se?|Symbol type|Mod def|Section
+ buf	y		extern		main.o	.data
+ bufp0	y		global		swap.o	.data
+ bufp1	y		local		swap.o	.bss // unintilized
+ swap	y		global		swap.o	.text
+ temp	n
+ incr	y		local		swap.o	.text
+ count	y		local		swap.o	.data
+ 
+ 
+ /****************7.7******************/
+ 
+ add a static to the double x
+ 
+ 
+ /****************7.8******************/
+ 
+ A. DEF(main, 1) DEF(main, 2);
+ B. UNKNOWN
+ C. ERROR
+ 
+ 
+ /****************7.9******************/
+ 
+ Main in p2 which is weak symbol, and when complier dealing
+ with multiply symbols, it choose the strong symbol in foo6.c
+ (rule 2) and the frist hex in main is 0x55 (pushl %ebp)
+ 
+ 
+ /****************7.10*****************/
+ 
+ I don't use gcc usually, So I'm not sure...
+ A. gcc p.o libx.a p.o
+ B. gcc p.o libx.a liby.a libx.add
+ C. gcc p.o libx.a liby.a libx.a libz.a
+ 
+ 
+ /****************7.11*****************/
+ 
+ The spaces is reserved for the .bss data ?
+ 
+ 
+ /****************7.12*****************/
+ 
+ 
+ 
+ 
