@@ -1,0 +1,52 @@
+/*****************************************
+ **** Problems 8.9 - 8.23 ****************
+ *****************************************/
+ 
+ 
+ /****************8.9*********************/
+ 
+				AB	AC	BC	BD	CD
+ Concurrent?	N	Y	Y	Y	Y
+ 
+ 
+ /****************8.10********************/
+ 
+ A. fork	B. longjmp, execve	C. setjmp
+ 
+ 
+ /***********8.11 - 8.19******************/
+ 
+ 8.11:	4 times
+ 8.12:	8 times
+ 8.13:	A. x=4 x=3 x=2
+		B. x=4 x=2 x=3
+		C. x=2 x=4 x=3
+ 8.14:	3 lines
+ 8.15:	5 lines
+ 8.16:	counter = 2 // caz all data(including global) been copied
+ 8.17:	A. Hello 0 1 bye 2 bye
+		B. Hello 1 bye 0 2 bye
+		C. Hello 1 0 bye 2 bye
+ 8.18:	A. C. E.
+ 8.19:	2^n
+
+ 
+ /*****************8.20*******************/
+ 
+ // call ls in bin. I'm not sure whether it's correct or not.
+ int main(int argc, char **argv, char **envp)
+ {
+	execve("/bin/ls", argv, envp);
+	return 0;
+ }
+ 
+ 
+ /*****************8.21*******************/
+ 
+ A. bacc B. abcc C. acbc
+ 
+ 
+ /*****************8.23*******************/
+ 
+ The handler has been block when the later 3 signals coming
+ Thus the signals has been simply discard.
