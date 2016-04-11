@@ -1,5 +1,5 @@
  /***********************************
-  ****problems 7.6 -
+  ****problems 7.6 - 7.15 ***********
   **********************************/
  
  
@@ -32,6 +32,7 @@
  Main in p2 which is weak symbol, and when complier dealing
  with multiply symbols, it choose the strong symbol in foo6.c
  (rule 2) and the frist hex in main is 0x55 (pushl %ebp)
+ You can find it convinently in figure 7-19(if you get a book)
  
  
  /****************7.10*****************/
@@ -48,6 +49,59 @@
  
  
  /****************7.12*****************/
+ 
+ actually I have no idea what the address and the value are
+ meaning about. It just an offset store in the original space
+ and the add it to the ADD(symbol); So, am I get the core ideas
+ I may don't have to fill it.
+	linenum		address		value
+		15		0x804945c	
+		16		
+		18
+		19
+		23
+ 
+ /****************7.13******************/
+ 
+ A. offset	symbol	rel.type
+	0x12		p3		R_386_PC32
+	0x19		xp		R_386_32
+	0x20		p2		R_386_PC32
+	
+ B. 0x4			x		R_386_32
+ 
+ 
+ 
+ /****************7.14******************/
+ 
+ A. offset 	symbol 	rel.type
+	0x11				R_386_32
+	
+ B. 0x0-0x14			R_386_32
+ 
+ 
+ /****************7.15******************/
+ 
+ Don't know how to test it...
+	
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
  
  
  
