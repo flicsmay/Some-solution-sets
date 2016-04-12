@@ -31,10 +31,10 @@ int main()
 			else
 				printf("child %d terminated abnormally\n");
 		}
-		
-		if (errno != ECHILD)
-			unix_error("waitpid error");
-		
-		exit(0);
 	}
+		
+	if (errno != ECHILD)
+		unix_error("waitpid error");
+		
+	exit(0);
 }
