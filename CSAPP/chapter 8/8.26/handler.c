@@ -7,11 +7,15 @@ void cont_handler_child(int sig);
 void int_handler_child(int sig);
 void tstp_handler_child(int sig);
 
-extern sigjmp_buf restart_buf;
 
 extern job_info_ctr job_ctr;
 extern job_info *job_lists[MAX_JOBS_NUM];
 
+
+/*
+ * resiger signal
+ * SIGINT SIGTSTP SIGCHLD
+ */
 void resiger_signal(void)
 {
 	Signal(SIGINT, int_handler);
@@ -19,20 +23,31 @@ void resiger_signal(void)
 	Signal(SIGCHLD, chld_handler);
 }
 
-
+// signal SIGINT handler
 void int_handler(int sig)
 {
+	char errinfo[128];
+
 	if (job_ctr.has_frt_job)
-		Kill(-FRONT_GOUP_ID, SIGINT);
+		Kill(-(job_ctr.pid), SIGINT);
+	printf("Job [%d] %d stopped by signal :", job_ctr.jid, job_ctr.pid);
+	psignal(sig, errinfo);
+	printf("\n");
 }
 
+// signal TSTP handler
 void tstp_handler(int sig)
 {
+	char errinfo[128];
+
 	if (job_ctr.has_frt_job)
-		Kill(-FRONT_GOUP_ID, SIGTSTP);
+		Kill(-(job_ctr.pid), SIGTSTP);
+	printf("Job [%d] %d terminated by signal :", job_ctr.jid, job_ctr.pid);
+	psignal(sig, errinfo);
+	printf("\n");
 }
 
-
+// to reap children & printf status info
 void chld_handler(int sig)
 {
 	pid_t pid;
@@ -41,6 +56,7 @@ void chld_handler(int sig)
 
 	while ((pid = waitpid(-1, &status, 0)) > 0)
 	{
+		remove_job(pid);	// remove jobs from list after reap it 
 		if (WIFEXITED(status))
 			printf("child %d terminated normally with exit status=%d\n",
 			pid, WEXITSTATUS(status));
@@ -55,42 +71,4 @@ void chld_handler(int sig)
 				printf("child %d terminated abnormally\n", pid);
 		}
 	}
-}
-
-
-void set_sig_handler_child(void)
-{
-	Signal(SIGINT, int_handler_child);
-	Signal(SIGTSTP, tstp_handler_child);
-	Signal(SIGCONT, cont_handler_child);
-}
-
-
-void cont_handler_child(int sig)
-{
-	siglongjmp(restart_buf, 1);
-}
-
-
-void int_handler_child(int sig)
-{
-	pid_t pid = getpid();
-	int jid = 0;
-
-	jid = find_job(pid);
-	printf("Job [%d] %d stopped by signal :", jid, pid);
-	psignal(sig, NULL);
-	Pause();
-}
-
-
-void tstp_handler_child(int sig)
-{
-	pid_t pid = getpid();
-	int jid = 0;
-
-	jid = find_job(pid);
-	printf("Job [%d] %d terminated by signal :", jid, pid);
-	psignal(sig, NULL);
-	exit(0);
 }

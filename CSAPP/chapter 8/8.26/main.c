@@ -3,19 +3,17 @@
 
 job_info_ctr job_ctr;
 job_info *job_lists[MAX_JOBS_NUM];
-sigjmp_buf restart_buf;
+jmp_buf restart_buf;
 
 
 
 int main()
 {
 	char cmdline[MAXLINE];
-	job_ctr.max = 0;
-	job_ctr.num = 0;
-	job_ctr.last = 1;
-	job_ctr.has_frt_job = 0;
 
-	resiger_signal();
+	initi_global();	// initial the global var
+	resiger_signal();  // resiger signal
+
 	while (1)
 	{
 		printf("> ");
@@ -24,7 +22,7 @@ int main()
 		if (feof(stdin))
 			exit(0);
 
-		eval(cmdline);
+		eval(cmdline); // evaluate comandline
 	}
 }
 
@@ -35,8 +33,8 @@ void eval(char *cmdline)
 	char buf[MAXLINE];
 	int status;
 	int bg;
-	int jid;
 	pid_t pid;
+	int rc;
 
 	strcpy(buf, cmdline);
 	bg = parseline(buf, argv);
@@ -45,26 +43,30 @@ void eval(char *cmdline)
 
 	// if isn't builtin command
 	if (!builtin_command(argv)) {
-		if ((pid = Fork()) == 0) { // fork a process
-			if (!bg)
-				Setpgid(getpid(), FRONT_GOUP_ID);
-			set_sig_handler_child();
-			jid = resiger_job(pid, buf);
-			sigsetjmp(restart_buf, 1);
+
+		rc = setjmp(restart_buf); // set signal jump destination
+		if (rc == 1)
+			bg = 0;
+		if (rc == 2)
+			bg = 1;
+		if ((pid = Fork()) == 0) {
+			Setpgid(getpid(), getpid()); // get each child a unique group
 			if (execve(argv[0], argv, environ) < 0) {
 				printf("%s: Command not found.\n", argv[0]);
 				exit(0);
 			}
 		}
 
+		job_ctr.jid = resiger_jobs(pid, buf); // resiger to get a JID
+		job_ctr.pid = pid;	// get pid to sent signal when a int or stop sig coming
 		if (!bg) {
-			job_ctr.has_frt_job = 1;
+			job_ctr.has_frt_job = 1;	// set has_front_job signed
 			status = 0;
-			if (waitpid(pid, &status, 0) < 0)
-				unix_error("waitfg: waitpid error");
+			Waitpid(pid, &status, 0);
+			remove_job(pid);			// remove job after reap
 		}
 		else
-			printf("[%d] %d	  %s", jid, pid, cmdline);
+			printf("[%d] %d	  %s", job_ctr.jid, pid, cmdline);
 	}
 	job_ctr.has_frt_job = 0;
 	return;

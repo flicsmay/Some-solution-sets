@@ -2,7 +2,16 @@
 
 extern job_info_ctr job_ctr;
 extern job_info *job_lists[MAX_JOBS_NUM];
+extern jmp_buf restart_buf;
 
+
+
+/*
+ * malloc an space to place an initalized job line
+ * input(3)	: PID of job & JID of job & command that staring the job(char*)
+ * output	: pointer to the alloced space if success
+ *			: NULL otherwise
+ */
 job_info *init_job(pid_t pid, int jid, char *info)
 {
 	job_info * p;
@@ -21,6 +30,9 @@ job_info *init_job(pid_t pid, int jid, char *info)
 }
 
 
+/*
+ * print out all jobs from job_lines
+ */
 void print_jobs()
 {
 	int i;
@@ -33,7 +45,12 @@ void print_jobs()
 		}
 }
 
-
+/*
+ * find a job in the job lines
+ * input(1) : PID of job to found
+ * ouput	: JID (which is always grater than 0) if success
+ *			: 0 otherwise
+ */
 int find_job(pid_t pid)
 {
 	int i;
@@ -47,8 +64,13 @@ int find_job(pid_t pid)
 }
 
 
-
-int resiger_job(pid_t pid, char *info)
+/*
+ * resiger a job to job lines
+ * input(2)	: PID of job & INFOMATION of commandline
+ * output	: JID of job if success
+ *			: 0 otherwise
+ */
+int resiger_jobs(pid_t pid, char *info)
 {
 	int jid;
 
@@ -58,30 +80,30 @@ int resiger_job(pid_t pid, char *info)
 		return 0;
 	}
 
-	jid = job_ctr.last;
+	jid = 1;
 
-	while (job_lists[jid])
-	{
-		jid++;
-		if (jid >= MAX_JOBS_NUM)
-			jid = 1;
-	}
+	while (job_lists[jid] != NULL) jid++; // to find a space
 	job_lists[jid] = init_job(pid, jid, info);
 
 	job_ctr.num++;
-	job_ctr.last = jid;
-	if (job_ctr.num == MAX_JOBS_NUM)
+	if (job_ctr.num >= MAX_JOBS_NUM - 1) // since job_list[0] is unused
 		job_ctr.max = 1;
 	
 	return jid;
 }
 
-int remove_job(pid_t pid)
+/*
+ * remove a job from job line & free the allocated spaces
+ * ( by setting the entry pointer to null )
+ * input(1)	: PID of job
+ * output	: JID of oringial job
+ */
+void remove_job(pid_t pid)
 {
 	int i;
 	int jid;
 	
-	for (i = 0; i < MAX_JOBS_NUM; i++)
+	for (i = 1; i < MAX_JOBS_NUM; i++)
 	{
 		if (job_lists[i] && (job_lists[i]->PID == pid)) {
 			jid = job_lists[i]->JID;
@@ -99,11 +121,9 @@ int remove_job(pid_t pid)
 
 /*
  * restart a process in background
- * input prototype : %JID or PID (int)
- * output	: JID of the background proc
- *			: 0 otherwises
+ * input(1) : %JID or PID (char *)
  */
-int restart_bg(char *argv)
+void restart_bg(char *argv)
 {
 	int num = 0;
 	int jid = 0;
@@ -114,29 +134,69 @@ int restart_bg(char *argv)
 
 	if (argv[0] == '%') {
 		if ((jid = atoi(++argv)) != 0) {
-			pid = job_lists[jid]->PID;
-			Kill(pid, SIGCONT);
-			return pid;
+			if (job_lists[jid]) {
+				pid = job_lists[jid]->PID;
+				Kill(pid, SIGKILL);
+				longjmp(restart_buf, 1);
+			}
 		}
 	}
 	else if ((num = atoi(argv)) != 0) {
 			jid = find_job(num);
 			if (jid != 0) {
 				pid = job_lists[jid]->PID;
-				Kill(pid, SIGCONT);
-				return pid;
+				Kill(pid, SIGKILL);
+				longjmp(restart_buf, 1);
 			}
 		}
 	printf("%s: No such process\n", argv);
-	return 0;
 }
 
-
+/* 
+ * restart a job in foreground
+ * input(1)	: %JID or PID (char *)
+ */
 int restart_fg(char *argv)
 {
+	int num = 0;
+	int jid = 0;
 	int pid = 0;
-	int status = 0;
-	if ((pid = restart_bg(argv)) != 0)
-		Waitpid(pid, &status, 0);
-	return pid;
+
+	if (argv == NULL)
+		return 0;
+
+	if (argv[0] == '%') {
+		if ((jid = atoi(++argv)) != 0) {
+			if (job_lists[jid]) {
+				pid = job_lists[jid]->PID;
+				Kill(pid, SIGKILL);
+				longjmp(restart_buf, 2);
+			}
+		}
+	}
+	else if ((num = atoi(argv)) != 0) {
+		jid = find_job(num);
+		if (jid != 0) {
+			pid = job_lists[jid]->PID;
+			Kill(pid, SIGKILL);
+			longjmp(restart_buf, 2);
+		}
+	}
+	printf("%s: No such process\n", argv);
+}
+
+/*
+ * initialize the global value
+ * job_lists
+ * job_ctr
+ */
+void initi_global(void)
+{
+	int i;
+	for (i = 0; i < MAX_JOBS_NUM; i++)
+		job_lists[i] = NULL;
+
+	job_ctr.max = 0;
+	job_ctr.num = 0;
+	job_ctr.has_frt_job = 0;
 }
