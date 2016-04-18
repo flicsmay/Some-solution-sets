@@ -1,0 +1,33 @@
+/********************************************
+ ********* problems 9.11 - 
+ ********************************************
+ 
+ /****************** 9.11 *******************/
+ 
+ A. 00 0010 0111 1100
+ B. 	VPN		TLB index |	tag		hit?	Page fault	PPN
+		0x09		1		0x02	No			No		0x17
+ C.	0101 1111 1100
+ D. 	Byte off	Cache index | tag 	hit?	byte returned
+		0x02		0xf			0x17	No			-
+		
+		
+ /****************** 9.12 *******************/
+ 
+ A. 00 0011 1010 1001
+ B. 	VPN		TLB index |	tag		hit?	Page fault	PPN
+		0x0E		2		3		No			No		0x11
+ C.	0100 0110 1001
+ D. 	Byte off	Cache index | tag 	hit?	byte returned
+		0x11		0xA			0x11	No			-
+		
+		
+ /****************** 9.13 *******************/
+ 
+ A. 00 0000 0100 0000
+ B. 	VPN		TLB index |	tag		hit?	Page fault	PPN
+		0x1			0x1		0x0		No			Yes		-
+
+		
+ /****************** 9.14 *******************/
+ 
