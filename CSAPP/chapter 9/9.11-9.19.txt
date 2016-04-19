@@ -1,0 +1,100 @@
+/********************************************
+ ********* problems 9.11 - 9.19 *************
+ ********************************************
+ 
+ /****************** 9.11 *******************/
+ 
+ A. 00 0010 0111 1100
+ B. 	VPN		TLB index |	tag		hit?	Page fault	PPN
+		0x09		1		0x02	No			No		0x17
+ C.	0101 1111 1100
+ D. 	Byte off	Cache index | tag 	hit?	byte returned
+		0x02		0xf			0x17	No			-
+		
+		
+ /****************** 9.12 *******************/
+ 
+ A. 00 0011 1010 1001
+ B. 	VPN		TLB index |	tag		hit?	Page fault	PPN
+		0x0E		2		3		No			No		0x11
+ C.	0100 0110 1001
+ D. 	Byte off	Cache index | tag 	hit?	byte returned
+		0x11		0xA			0x11	No			-
+		
+		
+ /****************** 9.13 *******************/
+ 
+ A. 00 0000 0100 0000
+ B. 	VPN		TLB index |	tag		hit?	Page fault	PPN
+		0x1			0x1		0x0		No			Yes		-
+
+		
+ /****************** 9.14 *******************/
+ 
+ #include <stdio.h>
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <fcntl.h>
+ #include <unistd.h>
+ #include <sys/mman.h>
+ 
+ int main()
+ {
+	int fd;
+	char *start;
+	
+	if ((fd = open("hello.txt", O_RDWR, 0)) < 0) { // in chapter 10
+		printf("fail to open file\n");
+		return 0;
+	}
+	
+	start = mmap(NULL, 1, PROT_WRITE, MAP_SHARED, fd, 0);
+	close(fd);
+	
+	if (start == MAP_FAILED) return -1;
+	
+	*start = 'J';
+	munmap(start, 1);
+	return 0;
+ } // I have no idea how it work, but it actually does works.
+ 
+ 
+ /***************** 9.15 ********************/
+ 
+ Request	Block size	Block header
+ malloc(3)		8			0x9
+ malloc(11)		16			0x11
+ malloc(20)		24			0x19
+ malloc(21)		32			0x21
+ 
+ 
+ /***************** 9.16 ********************/
+ 
+ Minimum block size
+ A. 12
+ B. 8
+ C. 16
+ D. 8
+ // I'm not sure
+ 
+ 
+ /***************** 9.19 ********************/
+ 
+ A. a 
+ B. d 
+ C. b or c ?
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
