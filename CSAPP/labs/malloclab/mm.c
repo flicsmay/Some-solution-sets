@@ -49,6 +49,8 @@ team_t team = {
 #define ALIGN(size)							(((size) + (ALIGNMENT - 1)) & ~(ALIGNMENT - 1)) // rounds up to the nearest mutiply of alignment
 #define GET_SIZE(headptr)					(*(unsigned int *)(headptr) & ~(ALIGNMENT - 1))
 
+#define MAX(x, y)							((x) > (y) ? (x) : (y))
+
 // test if the block allocation
 
 #define IS_ALLOCATED(headptr)				(*(unsigned int *)(headptr) & 0x1)
@@ -135,7 +137,7 @@ void *mm_malloc(size_t requiredSize)
 		return CONTENT_ADDRESS(headerPointer);
 	}
 
-	needExtendHeapSize = max(requiredSize, mem_pagesize());
+	needExtendHeapSize = MAX(requiredSize, mem_pagesize());
 	if ((headerPointer = extendHeap(needExtendHeapSize / WORD_SIZE)) == NULL)
 		return NULL;
 	placeHeaderFooter(headerPointer, actualRequiredSize);
@@ -245,7 +247,7 @@ static void *extendHeap(size_t wordsRequired)
 	if ((long)(headerPointer = mem_sbrk(bytesRequired)) == -1)
 		return NULL;
 
-	(char *)headerPointer -= FOOTER_SIZE; // set headptr to the current epilogue
+	headerPointer = FOOTER_SIZE; // set headptr to the current epilogue
 
 	PLACE_HEADER(headerPointer, bytesRequired);
 	PLACE_FOOTER(headerPointer);
