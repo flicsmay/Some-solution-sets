@@ -3,7 +3,7 @@
 
 static void readFullHttpRequest(int targetFD, HttpMessageType *httpMessage);
 static void checkHttpRequest(int targetFD, HttpMessageType *httpMessage);
-static int handleHttpRequest(int targetFD, HttpMessageType *httpMessage);
+static void handleHttpRequest(int targetFD, HttpMessageType *httpMessage);
 
 void ServeAClient(int targetFD, struct sockaddr_in *clientAddressInfo)
 {
@@ -51,8 +51,10 @@ static void checkHttpRequest(int targetFD, HttpMessageType *httpMessage)
 **************************************/
 
 static int parseURI(HttpMessageType *httpMessage);
+static int isFileReadable(struct stat *statBuf);
+static int isFileExecutable(struct stat *statBuf);
 
-static int handleHttpRequest(int targetFD, HttpMessageType *httpMessage)
+static void handleHttpRequest(int targetFD, HttpMessageType *httpMessage)
 {
 	int isStatic;
 	struct stat statBuf;
@@ -65,11 +67,22 @@ static int handleHttpRequest(int targetFD, HttpMessageType *httpMessage)
 	}
 
 	if (isStatic) {
-		if (!(S_ISREG()))
-		serveStaticPage(targetFD, httpMessage);
+		if (!isFileReadable(&statBuf)) {
+			ClientError(targetFD, httpMessage->fileName, "403", "Forbidden",
+				"Tiny couldn't read the file");
+			return;
+		}
+
+		ServeStaticPage(targetFD, httpMessage, &statBuf);
 	}
 	else {
-		serveDynamicPage(targetFD, httpMessage);
+		if (!isFileExecutable(&statBuf)) {
+			ClientError(targetFD, httpMessage->fileName, "403", "Forbidden",
+				"Tiny couldn't run the CGI program");
+			return;
+		}
+
+		ServeDynamicPage(targetFD, httpMessage);
 	}
 }
 
@@ -82,7 +95,7 @@ static void readHttpRequestLine(rio_t *rio, HttpMessageType *httpMessage)
 {
 	char buf[MAXLINE];
 
-	Rio_readlineb(&rio, buf, MAXLINE);
+	Rio_readlineb(rio, buf, MAXLINE);
 	sscanf(buf, "%s %s %s", httpMessage->method, httpMessage->URI, httpMessage->version);
 }
 
@@ -132,4 +145,14 @@ static int parseURI(HttpMessageType *httpMessage)
 		strcat(fileName, URI);
 		return 0;
 	}
+}
+
+static int isFileReadable(struct stat *statBuf)
+{
+	return ((S_ISREG(statBuf->st_mode)) && (S_IRUSR & statBuf->st_mode));
+}
+
+static int isFileExecutable(struct stat *statBuf)
+{
+	return ((S_ISREG(statBuf->st_mode)) && (S_IXUSR & statBuf->st_mode));
 }

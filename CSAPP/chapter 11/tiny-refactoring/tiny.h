@@ -18,8 +18,8 @@ typedef struct HttpMessage
 
 void ServeAClient(int targetFD, struct sockaddr_in *clientAddressInfo);
 void ClientError(int targerFD, char *cause,
-	char errorNumber, char *shortMessage, char *longMessage);
-void serveStaticPage(int targetFD, HttpMessageType *httpMessage);
-void serveDynamicPage(int targetFD, HttpMessageType *httpMessage);
+	char* errorNumber, char *shortMessage, char *longMessage);
+void ServeStaticPage(int targetFD, HttpMessageType *httpMessage, struct stat *statBuf);
+void ServeDynamicPage(int targetFD, HttpMessageType *httpMessage);
 
 #endif

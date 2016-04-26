@@ -31,7 +31,7 @@ static void argumentError(FILE *targetFile, int argc, char **argv);
 
 static void checkArgument(int argc, char **argv)
 {
-	if (!isArgumentCorrect) {
+	if (!isArgumentCorrect(argc, argv)) {
 		argumentError(stderr, argc, argv);
 		exit(1);
 	}
@@ -72,7 +72,10 @@ static void serveClients(int listenedFD)
 
 static int isArgumentCorrect(int argc, char **argv)
 {
-	return (argc == 2) ? 1 : 0;
+	if (argc == 2)
+		return 1;
+	else
+		return 0;
 }
 
 
@@ -84,5 +87,7 @@ static void argumentError(FILE *targetFile, int argc, char **argv)
 
 static int acceptConnectedFD(int listenedFD, struct sockaddr_in *clientAddressInfo)
 {
-	return Accept(listenedFD, (SA*)clientAddressInfo, sizeof(clientAddressInfo));
+	int clientAdresslength = sizeof(clientAddressInfo);
+
+	return Accept(listenedFD, (SA*)clientAddressInfo, &clientAdresslength);
 }
