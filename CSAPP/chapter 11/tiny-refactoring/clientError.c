@@ -1,9 +1,9 @@
 #include "tiny.h"
 
 
-/***********************************
+/***********************************************
 		ClientError
-***********************************/
+***********************************************/
 
 void ClientError(int targetFD, char *cause,
 	char* errorNumber, char *shortMessage, char *longMessage)

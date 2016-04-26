@@ -1,5 +1,8 @@
 #include "tiny.h"
 
+/***********************************************
+		ServeAClient
+***********************************************/
 
 static void readFullHttpRequest(int targetFD, HttpMessageType *httpMessage);
 static void checkHttpRequest(int targetFD, HttpMessageType *httpMessage);
@@ -15,9 +18,9 @@ void ServeAClient(int targetFD, struct sockaddr_in *clientAddressInfo)
 }
 
 
-/***********************************
+/***********************************************
 		readFullHttpRequest
- ***********************************/
+***********************************************/
 
 static void readHttpRequestLine(rio_t *rio, HttpMessageType *httpMessage);
 static void readHttpRequestHeader(rio_t *rio, HttpMessageType *httpMessage);
@@ -32,9 +35,9 @@ static void readFullHttpRequest(int targetFD, HttpMessageType *httpMessage)
 }
 
 
-/*************************************
+/***********************************************
 		checkHttpRequest
-**************************************/
+***********************************************/
 
 static void checkHttpRequest(int targetFD, HttpMessageType *httpMessage)
 {
@@ -46,13 +49,13 @@ static void checkHttpRequest(int targetFD, HttpMessageType *httpMessage)
 }
 
 
-/*************************************
+/***********************************************
 		handleHttpRequest
-**************************************/
+***********************************************/
 
 static int parseURI(HttpMessageType *httpMessage);
-static int isFileReadable(struct stat *statBuf);
-static int isFileExecutable(struct stat *statBuf);
+static int isReadableFile(struct stat *statBuf);
+static int isExecutableFile(struct stat *statBuf);
 
 static void handleHttpRequest(int targetFD, HttpMessageType *httpMessage)
 {
@@ -67,7 +70,7 @@ static void handleHttpRequest(int targetFD, HttpMessageType *httpMessage)
 	}
 
 	if (isStatic) {
-		if (!isFileReadable(&statBuf)) {
+		if (!isReadableFile(&statBuf)) {
 			ClientError(targetFD, httpMessage->fileName, "403", "Forbidden",
 				"Tiny couldn't read the file");
 			return;
@@ -76,7 +79,7 @@ static void handleHttpRequest(int targetFD, HttpMessageType *httpMessage)
 		ServeStaticPage(targetFD, httpMessage, &statBuf);
 	}
 	else {
-		if (!isFileExecutable(&statBuf)) {
+		if (!isExecutableFile(&statBuf)) {
 			ClientError(targetFD, httpMessage->fileName, "403", "Forbidden",
 				"Tiny couldn't run the CGI program");
 			return;
@@ -87,9 +90,9 @@ static void handleHttpRequest(int targetFD, HttpMessageType *httpMessage)
 }
 
 
-/*************************************
+/***********************************************
 		other functions
-**************************************/
+***********************************************/
 
 static void readHttpRequestLine(rio_t *rio, HttpMessageType *httpMessage)
 {
@@ -97,6 +100,7 @@ static void readHttpRequestLine(rio_t *rio, HttpMessageType *httpMessage)
 
 	Rio_readlineb(rio, buf, MAXLINE);
 	sscanf(buf, "%s %s %s", httpMessage->method, httpMessage->URI, httpMessage->version);
+	printf("%s %s %s", httpMessage->method, httpMessage->URI, httpMessage->version);
 }
 
 static void handleHttpRequestHeader(char *buf, HttpMessageType *httpMessage)
@@ -147,12 +151,12 @@ static int parseURI(HttpMessageType *httpMessage)
 	}
 }
 
-static int isFileReadable(struct stat *statBuf)
+static int isReadableFile(struct stat *statBuf)
 {
 	return ((S_ISREG(statBuf->st_mode)) && (S_IRUSR & statBuf->st_mode));
 }
 
-static int isFileExecutable(struct stat *statBuf)
+static int isExecutableFile(struct stat *statBuf)
 {
 	return ((S_ISREG(statBuf->st_mode)) && (S_IXUSR & statBuf->st_mode));
 }

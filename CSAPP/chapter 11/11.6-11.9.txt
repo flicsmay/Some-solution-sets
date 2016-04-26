@@ -1,0 +1,52 @@
+/************************************************
+		Problems 11.6 - 11.9
+************************************************/
+
+ /****************11.6**************************/
+ 
+ beacuse it has have implemented the output of request header
+ So, the only things I do is add a printf line when reading
+ the request line
+ printf("%s %s %s", httpMessage->method, httpMessage->URI,
+ httpMessage->version);
+ 
+ 
+ /****************11.7**************************/
+ 
+ else if (strstr(filename, ".mpg"))
+		strcpy(filetype, "video/mpg");
+ simply add these two lines and it can successfully return 
+ the target files
+ 
+ 
+ /****************11.8**************************/
+ 
+ I simply add a Signal() and a handler function
+ Let the handler function to reap the exit child
+ and I turn out success.
+ 
+ 
+ /****************11.9**************************/
+ 
+ srcfd = Open(fileName, O_RDONLY, 0);
+	srcp = (char *)malloc(sizeof(char) * fileSize);
+	Rio_readn(srcfd, srcp, fileSize);
+	Close(srcfd);
+	Rio_writen(targetFD, srcp, statBuf->st_size);
+	free(srcp);
+ 
+ exchange these lines in severStatic() 
+ 
+ 
+ /**********************************************/
+ 
+ Problems 11.10 - 11.13 are too hard for me as I
+ have no any knowledge about HTTP with it's method.
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 

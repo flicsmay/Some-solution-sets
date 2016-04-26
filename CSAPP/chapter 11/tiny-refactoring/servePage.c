@@ -1,9 +1,9 @@
 #include "tiny.h"
 
 
-/*************************************
+/***********************************************
 		ServeStaticPage
-**************************************/
+***********************************************/
 
 static void getFileType(char *filename, char *filetype);
 
@@ -24,16 +24,18 @@ void ServeStaticPage(int targetFD, HttpMessageType *httpMessage, struct stat *st
 
 	/* Send response body to client */
 	srcfd = Open(fileName, O_RDONLY, 0);    //line:netp:servestatic:open
-	srcp = Mmap(0, fileSize, PROT_READ, MAP_PRIVATE, srcfd, 0);//line:netp:servestatic:mmap
+	srcp = (char *)malloc(sizeof(char) * fileSize);
+	Rio_readn(srcfd, srcp, fileSize);
 	Close(srcfd);                           //line:netp:servestatic:close
 	Rio_writen(targetFD, srcp, statBuf->st_size);         //line:netp:servestatic:write
+	free(srcp);
 	Munmap(srcp, fileSize);                 //line:netp:servestatic:munmap
 }
 
 
-/*************************************
+/***********************************************
 		ServeDynamicPage
-**************************************/
+***********************************************/
 
 void ServeDynamicPage(int targetFD, HttpMessageType *httpMessage)
 {
@@ -53,8 +55,12 @@ void ServeDynamicPage(int targetFD, HttpMessageType *httpMessage)
 		Dup2(targetFD, STDOUT_FILENO);         /* Redirect stdout to client */ //line:netp:servedynamic:dup2
 		Execve(fileName, emptylist, environ); /* Run CGI program */ //line:netp:servedynamic:execve
 	}
-	Wait(NULL); /* Parent waits for and reaps child */ //line:netp:servedynamic:wait
 }
+
+
+/***********************************************
+		other functions
+***********************************************/
 
 void getFileType(char *filename, char *filetype)
 {
@@ -64,6 +70,10 @@ void getFileType(char *filename, char *filetype)
 		strcpy(filetype, "image/gif");
 	else if (strstr(filename, ".jpg"))
 		strcpy(filetype, "image/jpeg");
+	else if (strstr(filename, ".mpg"))
+		strcpy(filetype, "video/mpg");
+	else if (strstr(filename, ".flv"))
+		strcpy(filetype, "video/flv");
 	else
 		strcpy(filetype, "text/plain");
 }

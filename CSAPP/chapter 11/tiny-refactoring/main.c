@@ -4,7 +4,7 @@
 static void checkArgument(int argc, char **argv);
 static int getPortNumber(int argc, char **argv);
 static void serveClients(int listenedFD);
-
+static int sigChildHandler(int sig);
 
 int main(int argc, char **argv)
 {
@@ -12,6 +12,7 @@ int main(int argc, char **argv)
 	int listenedFD;
 
 	checkArgument(argc, argv);
+	Signal(SIGCHLD, sigChildHandler);
 
 	portNumber = getPortNumber(argc, argv);
 
@@ -22,9 +23,9 @@ int main(int argc, char **argv)
 }
 
 
-/***********************************
+/***********************************************
 		checkArgument
-***********************************/
+***********************************************/
 
 static int isArgumentCorrect(int argc, char **argv);
 static void argumentError(FILE *targetFile, int argc, char **argv);
@@ -38,9 +39,9 @@ static void checkArgument(int argc, char **argv)
 }
 
 
-/***********************************
+/***********************************************
 		getPortNumber
-***********************************/
+***********************************************/
 
 static int getPortNumber(int argc, char **argv)
 {
@@ -48,9 +49,9 @@ static int getPortNumber(int argc, char **argv)
 }
 
 
-/***********************************
-		serveClient
-***********************************/
+/***********************************************
+		serveClients
+***********************************************/
 
 static int acceptConnectedFD(int listenedFD, struct sockaddr_in *clientAddressInfo);
 
@@ -62,13 +63,23 @@ static void serveClients(int listenedFD)
 	connectedFD = acceptConnectedFD(listenedFD, &clientAddressInfo);
 
 	ServeAClient(connectedFD, &clientAddressInfo);
-
 	Close(connectedFD);
 }
 
-/***********************************
-		others function
- ***********************************/
+/***********************************************
+		sigChildHandler
+***********************************************/
+
+static int sigChildHandler(int sig)
+{
+	int status;
+	Waitpid(-1, &status, 0);
+	printf("handler has successful reap a child\n");
+}
+
+/***********************************************
+		other functions
+***********************************************/
 
 static int isArgumentCorrect(int argc, char **argv)
 {
