@@ -1,0 +1,249 @@
+/***********************************************
+		Problems 12.16 - 12.26 (12.23 unfinished)
+ ***********************************************/
+ 
+ 
+ /**************** 12.16 ***********************/
+ 
+ #include "csapp.h"
+ 
+ void *thread(void *vargp);
+ 
+ int main(int argc, char **argv)
+ {
+		pthread tid;
+		int num;
+		int i;
+		
+		if (argc < 2) return;
+		num = atoi(argv[1]);
+		if (num < 1) return;
+		
+		for (i = 0; i < num; i++)
+			Pthread_create(&tid, NULL, thread, NULL);
+		pthread_exit(NULL);
+		exit(0);
+ }
+ 
+ void *thread(void *vargp)
+ {
+		printf("Hello world\n");
+		return NULL;
+ }
+ 
+ 
+ /**************** 12.17 ***********************/
+ 
+ A. When main calls exit(), it kills the whole process
+	including the thread. So it print nothing.
+ B. pthread_exit() and pthread_join() are ok.
+ 
+ 
+ /**************** 12.18 ***********************/
+ 
+ A. unsafe
+ B. safe
+ C. unsafe
+ 
+ 
+ /**************** 12.19 ***********************/
+ 
+ void writer(void)
+ {
+		while (1) {
+				while (readcnt != 0)
+					sleep(1);
+				P(&w);
+				// critical section
+				V(&w);
+		}
+ 
+ }
+ 
+ 
+ /**************** 12.20 ***********************/
+ 
+ sem_t w, turnsLock;
+ static int turns;
+ 
+ void reader(void)
+ {
+		while (1)
+		{
+				while (turns != READERS) {
+					sleep(1);
+					P(&turnsLock);
+					turns = (rand(0, 1)) ? WRITERS : READERS;
+					V(&turnsLock);
+				}
+				P(&w);
+				// critical section;
+				V(&w);
+		}
+ }
+ 
+ void writer(void)
+ {
+		while (1)
+		{
+				while (turn != WRITERS) {
+					sleep(1);
+					P(&turnsLock);
+					turns = (rand(0, 1)) ? READERS : WRITERS;
+					V(&turnsLock);
+				}
+				P(&w);
+				// critical section
+				V(&w);
+		}	
+ }
+
+ 
+ /**************** 12.21 ***********************/
+ 
+ int writerCounter;
+ sem_t criticalSectionsLock, writerCounterLock;
+ 
+ void reader(void)
+ {
+		while (1)
+		{
+				while (writerCounter != 0)
+					sleep(1);
+				P(&criticalSectionsLock);
+				// critical section;
+				V(&criticalSectionsLock);
+		}
+ }
+ 
+ void writer(void)
+ {
+		while (1)
+		{
+				P(&writerCounterLock);
+				writerCounter++;
+				if (writerCounter == 1)
+					P(&criticalSectionsLock);
+				V(&writerCounterLock);
+				// critical section
+				P(&writerCounterLock);
+				writerCounter--;
+				if (writerCounter == 0)
+					V(&criticalSectionsLock);
+				V(&writerCounterLock);
+		}
+ }
+ 
+ 
+ /**************** 12.22 ***********************/
+ 
+ #include "csapp.h"
+ int echo(int connfd);
+ void command(void);
+ 
+ int main(int argc, char **argv)
+ {
+		int listenfd, connfd, port;
+		socklen_t clientlen = sizeof(struct sockaddr_in);
+		struct sockaddr_in clientaddr;
+		fd_set read_set, ready_set;
+		int fdNumber = 0;
+		int fdBuf[MAX] = {0};
+		int index = 0;
+		
+		if (argc != 2) {
+			fpritnf(stderr, "usage: %s <port>\n", argv[0]);
+			exit(0);
+		}
+		port = atoi(argv[1]);
+		listenfd = Open_listenfd(port);
+		
+		FD_ZERO(&read_set);
+		FD_SET(STDIN_FILENO, &read_set);
+		FD_SET(listenfd, &read_set);
+		
+		while (1)
+		{
+			ready_set = read_set;
+			Selete(listenfd + 1 + fdNumber, &ready_set, NULL, NULL, NULL);
+			if (FD_ISSET(STDIN_FILENO, &ready_set))
+				command();
+			if (FD_ISSET(listenfd, &ready_set)) {
+				connfd = Accept(listenfd, (SA*)&clientaddr, &clientlen);
+				if (echo(connfd) == -1)
+					Close(connfd);
+				else {
+					fdNumber++;
+					FD_SET(connfd, &read_set);
+					fdBuf[fdNumber] = connfd;
+				}
+			for (index = 0; index < MAX; index++)
+				if (fdBuf[index] && FD_ISSET(fdBuf[index], &ready_set))
+					if (echo(fdBuf[index]) == -1) {
+						Close(fdBuf[index]);
+						fdNumber--;
+						fdBuf[index] = 0;
+					}
+			}
+		}
+ }
+ // not sure whether it's correct or not;
+ 
+ 
+ /**************** 12.23 ***********************/
+ 
+ 
+ /**************** 12.24 ***********************/
+ 
+ No, I don't believe that they are reentrancable
+ caz they have an argument that using a buffer space.
+ 
+ 
+ /**************** 12.25 ***********************/
+ 
+ yep, echo_cnt is thread safety but not reentrancy.
+ It uses a static variable called byte_cnt and It do has
+ used semaphore to protect it.
+ 
+ 
+ /**************** 12.26 ***********************/
+ 
+ sem_t w;
+ 
+ int gethostbyname_ts(struct hostent *host, const char *name)
+ {
+		struct hostent *hostTemp;
+		P(&w);
+		hostTemp = gethostbyname(name);
+		host->h_name = hostTemp->h_name;
+		host->haliases = hostTemp->haliases;
+		host->h_addrtype = hostTemp->h_addrtype;
+		host->h_length = hostTemp->h_length;
+		host->h_addr_list = hostTemp->h_addr_list;
+		V(&w);
+ }
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
