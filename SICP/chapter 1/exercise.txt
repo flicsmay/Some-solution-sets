@@ -1,0 +1,109 @@
+/***********************************************
+		Exercise 1.1 - 
+***********************************************/
+
+ 
+ /****************** 1.1 ***********************/
+ 
+ 10
+ 12
+ 8
+ 3
+ 6
+ 19
+ #f
+ 4
+ 16
+ 6
+ 16
+ 
+ 
+ /****************** 1.2 ***********************/
+ 
+ (/ (+ 5
+	   4
+	   (- 2
+		  (- 3
+			 (+ 6
+			    (/ 4 5)))))
+	(* 3
+	   (- 6 2)
+	   (- 2 7)))
+ 
+ 
+ /****************** 1.3 ***********************/
+ 
+ (define (two-larger-sum a b c)
+  (if (> a b)
+      (if (> b c)
+          (+ a b)
+          (+ a c))
+      (if (> a c)
+          (+ a b)
+          (+ b c))))
+ 
+ 
+ /****************** 1.4 ***********************/
+ 
+ if (b > 0)
+	return a + b;
+ return a - b;
+ 
+ 
+ /****************** 1.5 ***********************/
+ 
+ if interpreter using applicative-order evaluation
+ the interpreter would evaluate the parameter before it continue
+ So it would drop into an infinite loop
+ if interpreter using normal-order evaluation, I think it can
+ draw out 0 immediately.
+ 
+ 
+ /****************** 1.6 ***********************/
+ 
+ this procedure would drop into a very deep iteration
+ because the procedure will evaluate both the then-clause
+ and the else-clause which would cause a deep iteration.
+ 
+ 
+ /****************** 1.7 ***********************/
+ 
+ good-enough? approach would fail neither input numbers are
+ too big nor too small, watching the guess change can solve it.
+ 
+ (define (good-enough? old-guess new-guess)
+	(> 0.01
+	   (/ (abs (- new-guess old-guess))
+	      old-guess)))
+ 
+ 
+ /****************** 1.8 ***********************/
+ 
+ (define (cube-root x)
+  
+  (define (cube-root-guess guess)
+    (if (good-enough? guess)
+        guess
+        (cube-root-guess (better-guess guess))))
+  
+  (define (good-enough? guess)
+    (> 0.01 (abs (- x (cube guess)))))
+  (define (cube x) (* x x x))
+  
+  (define (better-guess guess)
+    (/ (+ (/ x (* guess guess))
+          (+ guess guess))
+       3))
+  
+  (cube-root-guess 1.0))
+ 
+ /****************** 1.9 ***********************/
+ 
+ the frist procedure is recursion and the second is iteration
+ 
+ 
+ /****************** 1.10 **********************/
+ 
+ A. 2 * n;
+ B. 2 ^ n;
+ C. 2^2^...^2 (n total)
