@@ -1,0 +1,134 @@
+/***********************************************
+		Exercise 1.11 - 1.20
+***********************************************/
+
+
+ /****************** 1.11 **********************/
+ 
+ recursion:
+ (define (f n)
+  (if (> 3 n)
+      n
+      (+ (f (- n 1))
+         (* 2
+            (f (- n 2)))
+         (* 3
+            (f (- n 3))))))
+			
+ iteration:
+ (define (f n)
+  (define (f-iter i f1 f2 f3)
+    (if (> i n)
+        f3
+        (f-iter (+ i 1)
+                f2
+                f3
+                (+ f3
+                   (* 2 f2)
+                   (* 3 f1)))))
+  (if (< n 3)
+      n
+      (f-iter 3 0 1 2)))
+	  
+ 
+ /****************** 1.12 **********************/
+ 
+ (define (Pascal-triangle row col)
+  (cond ((> col row) 0)
+        ((= row col) 1)
+        ((= col 0) 1)
+        (else (+ (Pascal-triangle (- row 1)
+                                  col)
+                 (Pascal-triangle (- row 1)
+                                  (- col 1))))))
+								  
+								
+ /************** 1.13 - 1.14 *******************/
+ 
+ skip;
+ 
+ /****************** 1.15 **********************/
+ 
+ 5 times
+ log(a);
+ 
+ 
+ /****************** 1.16 **********************/
+ 
+ (define (fast-expt b n)
+  (define (square x) (* x x))
+  
+  (define (inner-loop base index result)
+    (cond ((= index 0) result)
+          ((even? index) (inner-loop (square base)
+                                     (/ index 2)
+                                     result))
+          (else (inner-loop base
+                            (- index 1)
+                            (* result base)))))
+  
+  (define (even? n)
+    (= (remainder n 2) 0))
+  
+  (if (< n 1)
+      1
+      (inner-loop b n 1)))
+	  
+ 
+ /****************** 1.17 **********************/
+ 
+ (define (multipy a b)
+  (define (double n) (+ n n))
+  (define (halve n) (/ n 2))
+  (define (even? n) (= (remainder n 2) 0))
+  
+  (cond ((= b 1) a)
+        ((even? b) (multipy (double a) (halve b)))
+        (else (+ a
+                 (multipy a (- b 1))))))
+				 
+ 
+ /****************** 1.18 **********************/
+ 
+ (define (multi-iter a b)
+  (define (double n) (+ n n))
+  (define (halve n) (/ n 2))
+  (define (even? n) (= (remainder n 2) 0))
+  
+  (define (inner-loop a b result)
+    (cond ((= b 0) result)
+          ((even? b) (inner-loop (double a)
+                                 (halve b)
+                                 result))
+          (else (inner-loop a
+                            (- b 1)
+                            (+ a result)))))
+  (inner-loop a b 0))
+  
+  
+  /****************** 1.19 **********************/
+ 
+ (define (fib n)
+    (fib-iter 1 0 0 1 n))
+
+(define (fib-iter a b p q n)
+    (cond ((= n 0)
+            b)
+          ((even? n)
+            (fib-iter a 
+                      b
+                      (+ (square p) (square q))     ; compute p'
+                      (+ (* 2 p q) (square q))      ; compute q'
+                      (/ n 2)))
+          (else
+            (fib-iter (+ (* b q) (* a q) (* a p))
+                      (+ (* b p) (* a q))
+                      p
+                      q
+                      (- n 1)))))
+ 
+ 
+ /****************** 1.20 **********************/
+ 
+ applicative-order : 5 times
+ 
