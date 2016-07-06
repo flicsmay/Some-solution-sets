@@ -1,0 +1,165 @@
+/***********************************************
+		Exercise 2.11 - 2.20
+***********************************************/
+
+
+ /****************** 2.11 **********************/
+ 
+ the basic cases can be divided into nine cases
+ intervals can be conbination of positive and negative
+	p : positive	n : negative
+	(pp pn nn) * (pp pn nn)
+ it only occur pn * pn that it needs more than two multiplications
+ Although it save some muls and few compares, it's much complicated
+ than before, so, I don't decide to finish it.
+ 
+ 
+ /****************** 2.12 **********************/
+ 
+ ; make-center-percent
+; make an interval by a center point and a tolerance
+(define (make-center-percent center tolenrance)
+  (let ((lower (- center (* center tolenrance)))
+        (upper (+ center (* center tolenrance))))
+    (make-interval lower upper))
+	
+	
+ /****************** 2.13 **********************/
+ 
+ ; get-tolerances
+; get a tolerances of an interval
+(define (get-tolerance z)
+  (let ((upper (upper-bound z))
+        (lower (lower-bound z)))
+    (/ (- upper lower)
+       (+ upper lower))))
+	   
+ > (define z (make-center-percent 10 0.1))
+> (get-tolerance z)
+0.1
+> (get-tolerance (mul-interval z z))
+0.19801980198019803
+
+ when the percentages are rather small it is found that 
+ the tolerance of the product is proximity the sum of 
+ two addend's tolerances.
+ 
+ /****************** 2.14 **********************/
+ 
+ Indeed, there are too much differents between two
+ results
+ > (define z (make-interval 3 5))
+> (define k (make-interval 7 9))
+> (part1 z k)
+(mcons 1.5 4.5)
+> (part2 z k)
+(mcons 2.1 3.2142857142857144)
+> (define a (make-center-percent 7 0.1))
+> (define b (make-center-percent 11 0.2))
+> (part1 a b)
+(mcons 2.6526315789473687 6.7311258278145685)
+> (part2 a b)
+(mcons 3.671523178807947 4.863157894736843)
+>
+ 
+ /****************** 2.15 **********************/
+ /****************** 2.16 **********************/
+ 
+ have no idea about it.
+
+ /****************** 2.17 **********************/
+ 
+ ; last-pair : s_list
+; return the last item in the given list s_list
+(define (last-pair item)
+  (define (last-pair-iter cur-node)
+    (if (null? (cdr cur-node))
+        (car cur-node)
+        (last-pair-iter (cdr cur-node))))
+  (last-pair-iter item))
+
+  
+ /****************** 2.18 **********************/
+ 
+ ; reverse : s_list
+; reverse a given list : s_list
+(define (reverse itemlist)
+  (define (reverse-iter cur-node result-list)
+    (if (null? cur-node)
+        result-list
+        (reverse-iter (cdr cur-node)
+                      (append (cons (car cur-node) nil) ; bulid a list node
+                              result-list))))
+  (reverse-iter itemlist nil))
+
+ /****************** 2.19 **********************/
+ 
+ #lang planet neil/sicp
+
+; Exercise 2.19
+; change-counting problem 
+
+(define us-coins (list 50 25 10 5 1))
+(define uk-coins (list 100 50 20 10 5 2 1 0.5))
+
+
+; cc : int, s_list
+; how many different coins can be changed with the amount of money
+; coins-values : store the values of different coins 
+(define (cc amount coin-values)
+  (cond ((= amount 0) 1)
+        ((or (< amount 0) (no-more? coin-values)) 0)
+        (else
+         (+ (cc amount (except-first-denomination coin-values))
+            (cc (- amount (frist-denomination coin-values))
+                coin-values)))))
+
+; first-denomination : s_list
+; return the first values in the list : s_list
+; also can be implemented with the procedure : list-ref (value 0)
+(define (frist-denomination currency)
+  (car currency))
+
+; except-first-denomination : s_list
+; return the given list without the first node
+(define (except-first-denomination currency)
+  (cdr currency))
+
+; no-more? : s_list
+; return TRUE if there are NO values in the list
+(define (no-more? givenlist)
+  (null? givenlist))
+  
+ /****************** 2.20 **********************/
+ 
+ #lang planet neil/sicp
+
+; parity? : int 
+; for Exercise 2.20
+; return 0 if the given number is even
+(define (parity? n)
+  (remainder n 2))
+
+; same-parity : int, int ... int
+; return the list that have same even-odd parity as the first arg
+(define (same-parity first-arg . remaining-args)
+  (let ((first-parity (parity? first-arg)))
+    (define (same-parity-iter resultlist worklist)
+      (cond ((null? worklist)
+             resultlist)
+            ((= first-parity (parity? (car worklist)))
+             (same-parity-iter (append resultlist (list (car worklist)))
+                               (cdr worklist)))
+            (else
+             (same-parity-iter resultlist (cdr worklist)))))
+    (same-parity-iter '() remaining-args)))
+ 
+ 
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
