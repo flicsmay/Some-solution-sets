@@ -29,22 +29,12 @@
     (make-interval (min p1 p2 p3 p4)
                    (max p1 p2 p3 p4))))
 
-; interval division
-; forbid the division that try to divide an interval spans zero
+; divide interval
+; version found in book
 (define (div-interval x y)
-  (if (and (> (upper-bound y) 0) (< (lower-bound y) 0))
-      (display "divide an interval that spans zero is forbidden")
-      (mul-interval x
+  (mul-interval x
                 (make-interval (/ 1.0 (upper-bound y))
-                               (/ 1.0 (lower-bound y))))))
-
-; subtract two intervals
-; problem 2.8
-(define (sub-interval x y)
-  (add-interval x
-                (make-interval (- (lower-bound y))
-                               (- (upper-bound y)))))
-
+                               (/ 1.0 (lower-bound y)))))
 
 
 

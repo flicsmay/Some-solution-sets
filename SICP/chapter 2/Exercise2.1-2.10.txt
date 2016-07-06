@@ -1,5 +1,5 @@
 /***********************************************
-		Exercise 2.1 -
+		Exercise 2.1 - 2.10
 ***********************************************/
 
 
@@ -295,8 +295,14 @@
  
 /****************** 2.10 **********************/
  
- 
- 
+ ; interval division
+; forbid the division that try to divide an interval spans zero
+(define (div-interval x y)
+  (if (and (> (upper-bound y) 0) (< (lower-bound y) 0))
+      (display "divide an interval that spans zero is forbidden")
+      (mul-interval x
+                (make-interval (/ 1.0 (upper-bound y))
+                               (/ 1.0 (lower-bound y))))))
  
  
  
