@@ -1,0 +1,96 @@
+/***********************************************
+		Exercise 2.21 - 2.30
+***********************************************/
+
+
+ /****************** 2.21 **********************/
+ 
+ #lang planet neil/sicp
+
+; Exercise 2.21
+
+(define (square x) (* x x))
+
+; square-list1 : s_list
+; squares every items in the given list
+(define (square-list1 items)
+  (if (null? items)
+      nil
+      (cons (square (car items))
+            (square-list1 (cdr items)))))
+
+; square-list2 : s_list
+; squares every items in the given list
+(define (square-list2 items)
+  (map square items))
+  
+  
+ /****************** 2.22 **********************/
+ 
+ Obviously, It can't work correctly caz, when you 'cons'
+ the currently element and previous answers, with the 
+ previous answers behind, you just put the previous answers
+ in the end of the list.
+ consider the second procedure 'cons' as a tree, you always
+ put your previous answers into the left sub-tree, that product
+ a wrong answer.
+ 
+ 
+ /****************** 2.23 **********************/
+ 
+ ; Exercise 2.23
+
+; for-each-my-v : procedure, s_list
+; applies the procedure to each items in the given list
+(define (for-each-my-v f items)
+  (define (for-each-iter lst)
+    (cond ((not (null? lst))
+            (f (car lst))
+            (for-each-iter (cdr lst)))))
+  (for-each-iter items))
+  
+  
+ /****************** 2.24 **********************/
+ /****************** 2.25 **********************/
+ /****************** 2.26 **********************/
+ skip.
+ 
+ /****************** 2.27 **********************/
+ 
+ ; deep-reverse : s_tree
+; reverse sub-trees of each node in the given tree
+(define (deep-reverse tree)
+  (cond ((null? tree)
+         nil)
+        ((not (pair? tree))
+         tree)
+        (else
+         (reverse (list (deep-reverse (car tree))
+                        (deep-reverse (cadr tree)))))))
+ 
+ /****************** 2.28 **********************/
+ 
+ ; Exercise 2.28
+
+; fringe : s_tree
+; Convert the whole tree to a list whose elements are 
+; the node of the given tree
+(define (fringe tree)
+  (cond ((null? tree)
+         nil)
+        ((not (pair? tree))
+         tree)
+        (else
+         (append (car tree)
+                 (cdr tree)))))
+ 
+ /****************** 2.29 **********************/
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
