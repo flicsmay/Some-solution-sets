@@ -1,0 +1,316 @@
+/***********************************************
+		Exercise 2.41 - 2.50
+***********************************************/
+ 
+ 
+ /****************** 2.41 **********************/
+ 
+ #lang planet neil/sicp
+
+; Exercise 2.41
+
+; triples-sets : int_n
+; generate a list of unique sets with three elements 
+; all the elements include must be less than n
+(define (triples-sets n)
+  (flatmap (lambda (i)
+             (map (lambda (j)
+                    (cons i j))
+                  (unique-pairs (- i 1))))
+           (enumerate-interval 1 n)))
+
+; sum-of-triples : s_set
+; return the sum of the given set
+(define (sum-of-triples triple)
+  (+ (car triple) (cadr triple) (caddr triple)))
+
+; triples-sum : int_n, int_s
+; given an integer n and an integer s return all ordered sequences (i,j,k)
+; that less than n and sums equal to s
+(define (triples-sum n s)
+  (filter (lambda (pairs) (= s
+                             (sum-of-triples pairs)))
+          (triples-sets n)))
+
+; unique-pairs : int_n
+; generates the sequence of pair (i, j) with 1 <= j < i <= n
+(define (unique-pairs n)
+  (flatmap (lambda (i)
+             (map (lambda (j) (list i j))
+                  (enumerate-interval 1 (- i 1))))
+           (enumerate-interval 1 n)))
+
+
+; flatmap : #proc, s_list
+; append results which are the map of seq together
+(define (flatmap proc seq)
+  (accumulate append nil (map proc seq)))
+
+; permutatoins : s_set(list)
+; generate all the permutations of the given set
+(define (permutations s)
+  (if (null? s)
+      (list nil)
+      (flatmap (lambda (x)
+                 (map (lambda (p) (cons x p))
+                      (permutations (remove x s))))
+               s)))
+
+; remove : item, s_list
+; remove the specfic item from the given list
+(define (remove item sequence)
+  (filter (lambda (x) (not (= x item)))
+          sequence))
+
+
+; =================================================================
+
+; filter : #procedure, s_list/s_tree
+; go through the every elements of the given tree/list with #pro
+; eliminates all elements but those whose predication are TRUE
+(define (filter predicate sequence)
+  (cond ((null? sequence) nil)
+        ((predicate (car sequence))
+         (cons (car sequence)
+               (filter predicate (cdr sequence))))
+        (else
+         (filter predicate (cdr sequence)))))
+
+; accumulate : #operation, initial, s_list/s_tree
+; #oper to every elements in the structure together with an initial value
+(define (accumulate op initial sequence)
+  (if (null? sequence)
+      initial
+      (op (car sequence)
+          (accumulate op initial (cdr sequence)))))
+
+; enumerate-interval : int_low, int_high
+; go through the integer list from low to high
+(define (enumerate-interval low high)
+  (if (> low high)
+      nil
+      (cons low (enumerate-interval (+ low 1) high))))
+ 
+ 
+ /****************** 2.42 **********************/
+ 
+ ; Exercise 2.42
+
+; queens : int_boardsize
+; return solution to the n-queens puzzle
+(define (queens board-size)
+  (define (queen-cols k)
+    (if (= k 0)
+        (list empty-board)
+        (filter
+         (lambda (positions) (safe? k positions))
+         (flatmap
+          (lambda (rest-of-queens)
+            (map (lambda (new-row)
+                   (adjoin-position new-row k rest-of-queens))
+                 (enumerate-interval 1 board-size)))
+          (queen-cols (- k 1))))))
+  (queen-cols board-size))
+
+; empty-board 
+(define empty-board '())
+
+; safe? : int_k, s_list
+; return TRUE if the kth queens is safe in the position list
+(define (safe? k position)
+  (define (get-kth-pos n rest)
+    (if (= n 1)
+        (car rest)
+        (get-kth-pos (- n 1) (cdr rest))))
+  (let ((k-th-pos (get-kth-pos k position)))
+    (define (safe-iter n rest)
+      (if (= n 0)
+          #t
+          (and (safe-iter (- n 1) (cdr rest))
+               (not (or (= (car rest) (- k-th-pos n))
+                        (= (car rest) (+ k-th-pos n))
+                        (= (car rest) k-th-pos))))))
+    (safe-iter (- k 1) position)))
+
+; adjoin-position : int_pos, int_k, list_rest
+; add a position in to the row
+(define (adjoin-position new-row k rest)
+  (append rest (list new-row)))
+; =================================================================
+
+; flatmap : #proc, s_list
+; append results which are the map of seq together
+; but it actually just remove a lay of list from it
+(define (flatmap proc seq)
+  (accumulate append nil (map proc seq)))
+
+
+; filter : #procedure, s_list/s_tree
+; go through the every elements of the given tree/list with #pro
+; eliminates all elements but those whose predication are TRUE
+(define (filter predicate sequence)
+  (cond ((null? sequence) nil)
+        ((predicate (car sequence))
+         (cons (car sequence)
+               (filter predicate (cdr sequence))))
+        (else
+         (filter predicate (cdr sequence)))))
+
+; accumulate : #operation, initial, s_list/s_tree
+; #oper to every elements in the structure together with an initial value
+(define (accumulate op initial sequence)
+  (if (null? sequence)
+      initial
+      (op (car sequence)
+          (accumulate op initial (cdr sequence)))))
+
+; enumerate-interval : int_low, int_high
+; go through the integer list from low to high
+(define (enumerate-interval low high)
+  (if (> low high)
+      nil
+      (cons low (enumerate-interval (+ low 1) high))))
+ 
+ /****************** 2.43 **********************/
+ 
+ I think it may be the T*board-size
+ 
+ /****************** 2.44 **********************/
+ 
+ (define (up-split painter n)
+    (if (= n 0)
+        painter
+        (let ((smaller (up-split painter (- n 1))))
+            (below painter
+                   (beside smaller smaller)))))
+				   
+ /****************** 2.45 **********************/
+ 
+ (define (split big-combiner small-combiner)
+    (define (inner painter n)
+        (if (= n 0)
+            painter
+            (let ((smaller (inner painter (- n 1))))
+                (big-combiner painter   
+                              (small-combiner smaller smaller)))))
+    inner)
+ 
+ /****************** 2.46 **********************/
+ 
+ #lang planet neil/sicp
+
+; frame-coord-map : s_frame
+; used to shift and scale images to fit the frame
+(define (frame-coord-map frame)
+  (lambda (v)
+    (add-vect
+     (origin-frame frame)
+     (add-vect (scale-vect (xcor-vect v)
+                           (edge1-frame frame))
+               (scale-vect (ycor-vect v)
+                           (edge2-frame frame))))))
+
+; Exercise 2.46
+
+; make-vect : x-point, y-point
+; make a vector with two given points
+(define (make-vect x y)
+  (cons x y))
+
+; xcor-vect : vector
+; return the x point of given vector
+(define (xcor-vect v)
+    (car v))
+
+; ycor-vect : vector
+; return the x point of given vector
+(define (ycor-vect v)
+    (cadr v))
+
+; add-vect : vect1, vect2
+; return a vector which is the sum of two given vectors
+(define (add-vect v1 v2)
+  (make-vect (+ (xcor-vect v1) (xcor-vect v2))
+             (+ (ycor-vect v1) (ycor-vect v2))))
+
+; sub-vect : vect1, vect2
+; return the subtraction of two given vectors
+(define (sub-vect v1 v2)
+  (make-vect (- (xcor-vect v1) (xcor-vect v2))
+             (- (ycor-vect v1) (ycor-vect v2))))
+
+; scale-vect : factor, vector
+; scale the given vector with a given factor
+(define (scale-vect factor vect)
+    (make-vect (* factor (xcor-vect vect))
+               (* factor (ycor-vect vect))))
+			  
+ /****************** 2.47 **********************/
+ 
+ (define (make-frame origin edge1 edge2)
+    (list origin edge1 edge2))
+
+(define (origin-frame f)
+    (car f))
+
+(define (edge1-frame f)
+    (cadr f))
+
+(define (edge2-frame f)
+    (caddr f))
+	
+(define (make-frame origin edge1 edge2)
+    (cons origin
+          (cons edge1 edge2)))
+
+(define (origin-frame f)
+    (car f))
+
+(define (edge1-frame f)
+    (cadr f))
+
+(define (edge2-frame f)
+    (cddr f))
+	
+ /****************** 2.48 **********************/
+
+ ; make-segment : x-point, y-point
+; make a segment with two given points
+(define (make-segment x y)
+  (list (x y)))
+
+; start-segment : segment
+; return the start point of segment
+(define (start-segment segment)
+  (car segment))
+
+; end-segment : segment
+; return the end point of a given segment
+(define (end-segment segment)
+  (cadr segment))
+ 
+ /****************** 2.49 **********************/
+ 
+ skip;
+ 
+ /****************** 2.50 **********************/
+ 
+ (define (flip-horiz painter)
+    (transform-painter painter
+                       (make-vect 1.0 0.0)
+                       (make-vect 0.0 0.0)
+                       (make-vect 1.0 1.0)))
+ 
+ (define (rotate180 painter)
+    (transform-painter painter
+                       (make-vect 1.0 1.0)
+                       (make-vect 0.0 1.0)
+                       (make-vect 1.0 0.0)))
+ 
+ (define (rotate270 painter)
+    (transform-painter painter
+                       (make-vect 0.0 1.0)
+                       (make-vect 0.0 0.0)
+                       (make-vect 1.0 1.0)))
+ 
+ 
