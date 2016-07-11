@@ -221,7 +221,7 @@
 ; union-set : set1, set2
 ; return a set which contains all the elements from two given sets
 (define (union-set set1 set2)
-  (cons set1 set2))
+  (append set1 set2))
 
 ; intersection-set : set1, set2
 ; return the set which is the inersection of two sets
