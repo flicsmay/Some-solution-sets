@@ -1,0 +1,255 @@
+/***********************************************
+		Exercise 2.51 - 2.60
+***********************************************/
+ 
+ 
+ /****************** 2.51 **********************/
+ 
+ (define (below painter1 painter2)
+    (let ((split-point (make-vect 0.0 0.5)))
+        (let ((paint-top
+                (transform-painter painter2
+                                   split-point
+                                   (make-vect 1.0 0.5)
+                                   (make-vect 0.0 1.0)))
+              (paint-down
+                (transform-painter painter1
+                                   (make-vect 0.0 0.0)
+                                   (make-vect 1.0 0.0)
+                                   split-point)))
+            (lambda (frame)
+                (paint-top frame)
+                (paint-down frame)))))
+				
+ /****************** 2.52 **********************/
+ 
+ skip;
+ 
+ /****************** 2.53 **********************/
+ 
+ (mcons 'a (mcons 'b (mcons 'c '())))
+(mcons (mcons 'george '()) '())
+(mcons (mcons 'y1 (mcons 'y2 '())) '())
+(mcons 'y1 (mcons 'y2 '()))
+#f
+#f
+(mcons 'red (mcons 'shoes (mcons 'blue (mcons 'socks '()))))
+ 
+ /****************** 2.54 **********************/
+ 
+ ; equal? : symbols_a, symbols_b
+; return TRUE if a and b are completely equal, FALSE otherwise
+(define (equal? a b)
+  (cond ((and (null? a) (null? b))
+         #t)
+        ((or (null? a) (null? b))
+         #f)
+        ((not (eq? (car a) (car b)))
+         #f)
+        (else
+         (equal? (cdr a) (cdr b)))))
+ 
+ /****************** 2.55 **********************/
+ 
+ > ''aaa
+(mcons 'quote (mcons 'aaa '()))
+> (car ''aaa)
+'quote
+
+ I type 'aaa on my interpreter and got this. 
+ apparently it is a list
+ 
+ /****************** 2.56 **********************/
+ 
+ ; deriv : expression, variable
+; make the procedure d(expression)/d(variable)
+(define (deriv exp var)
+  (cond ((number? exp) 0)
+        ((variable? exp)
+         (if (same-variable? exp var) 1 0))
+        ((sum? exp)
+         (make-sum (deriv (addend exp) var)
+                   (deriv (augend exp) var)))
+        ((product? exp)
+         (make-sum
+           (make-product (multiplier exp)
+                         (deriv (multiplicand exp) var))
+           (make-product (deriv (multiplier exp) var)
+                         (multiplicand exp))))
+        ((exponentiation? exp)
+         (let ((ex (exponent exp))
+               (bs (base exp)))
+           (make-product (make-product ex
+                                       (make-exponentiation bs (- ex 1)))
+                         ; n * u ^(n-1)
+                         (deriv bs var))))
+                         
+        (else
+         (error "unknown expression type -- DERIV" exp))))
+
+; exponentiation? : expression
+; return TRUE if the given expression IS a exponentiation
+(define (exponentiation? exp)
+  (and (pair? exp)
+       (eq? (car exp) '^)))
+
+; make-exponentiation : base, exponent
+; compose an exponentiation with base and exponent
+(define (make-exponentiation base exponent)
+  (cond ((= exponent 0)
+         1)
+        ((= exponent 1)
+         base)
+        (else
+         (list '^ base exponent))))
+
+; exponent : expression
+; return exponent part of the expression
+(define (exponent exp)
+  (caddr exp))
+
+; base : expression
+; return base part of the expression
+(define (base exp)
+  (cadr exp))
+
+(define (variable? x) (symbol? x))
+
+(define (same-variable? v1 v2)
+  (and (variable? v1) (variable? v2) (eq? v1 v2)))
+
+(define (sum? x)
+  (and (pair? x) (eq? (car x) '+)))
+
+(define (addend s) (cadr s))
+
+(define (augend s) (caddr s))
+
+(define (product? x)
+  (and (pair? x) (eq? (car x) '*)))
+
+(define (multiplier p) (cadr p))
+
+(define (multiplicand p) (caddr p))
+
+(define (make-sum a1 a2)
+  (cond ((=number? a1 0) a2)
+        ((=number? a2 0) a1)
+        ((and (number? a1) (number? a2)) (+ a1 a2))
+        (else (list '+ a1 a2))))
+
+(define (=number? exp num)
+  (and (number? exp) (= exp num)))
+
+(define (make-product m1 m2)
+  (cond ((or (=number? m1 0) (=number? m2 0)) 0)
+        ((=number? m1 1) m2)
+        ((=number? m2 1) m1)
+        ((and (number? m1) (number? m2)) (* m1 m2))
+        (else (list '* m1 m2))))
+ 
+ /****************** 2.57 **********************/
+ 
+ there are only two procedures should be changed
+ 
+ ; multiplicand : multiplication
+; return the multiplicand of the multiplication
+(define (multiplicand p)
+  (let ((len (length p)))
+    (if (= len 3)
+        (caddr p)
+        (append '(*) (cddr p)))))
+; augend : list
+; return the augend list of the given
+(define (augend s)
+  (let ((len (length s)))
+    (if (= 3 len)
+        (caddr s)
+        (append '(+) (cddr s))))) ; after + and addend
+ 
+ /****************** 2.58 **********************/
+ 
+(define (make-sum a1 a2)
+    (cond ((=number? a1 0)
+            a2)
+          ((=number? a2 0)
+            a1)
+          ((and (number? a1) (number? a2))
+            (+ a1 a2))
+          (else
+            (list a1 '+ a2))))
+
+(define (sum? x)
+    (and (pair? x)
+         (eq? (cadr x) '+)))
+
+(define (addend s)
+    (car s))
+
+(define (augend s)
+    (caddr s))
+ 
+ nope, It's much complicater than before
+ 
+ /****************** 2.59 **********************/
+ 
+ ; union-set : set1, set2
+; return a set that is union of set1 and set2
+(define (union-set set1 set2)
+  (define (union-set-iter result rest)
+    (if (null? rest)
+        result
+        (union-set-iter (adjoin-set (car rest) result) (cdr rest))))
+  (union-set-iter (union-set-iter '() set1) set2))
+  
+  the outputs are reversed though
+ 
+ /****************** 2.60 **********************/
+ 
+ ; element-of-set : elem, set
+; return TRUE if the given element is a member of a set
+(define (element-of-set? x set)
+  (cond ((null? set) false)
+        ((equal? x (car set)) true)
+        (else (element-of-set? x (cdr set)))))
+
+; adjoin-set : elem, set
+; return the set that contains the original elems with adjoined elem
+(define (adjoin-set x set)
+  (cons x set))
+
+; union-set : set1, set2
+; return a set which contains all the elements from two given sets
+(define (union-set set1 set2)
+  (cons set1 set2))
+
+; intersection-set : set1, set2
+; return the set which is the inersection of two sets
+(define (intersection-set set1 set2)
+  (define (inter-set-iter result rest)
+    (cond ((null? rest) result)
+          ((and (element-of-set? (car rest) set2)
+                (not (element-of-set? (car rest) result)))
+           (inter-set-iter (adjoin-set (car rest) result)
+                           (cdr rest)))
+          (else
+           (inter-set-iter result (cdr rest)))))
+  (inter-set-iter '() set1))
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
