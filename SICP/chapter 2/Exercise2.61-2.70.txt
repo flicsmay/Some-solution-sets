@@ -1,0 +1,234 @@
+/***********************************************
+		Exercise 2.61 - 2.70
+***********************************************/
+ 
+ 
+ /****************** 2.61 **********************/
+ 
+ ; adjoin-set : elem, set
+; return a set which contains the given set elems as well as the elem
+(define (adjoin-set elem set)
+  (define (adjoin-set-iter result rest)
+    (if (null? rest)
+        (append set (list elem))
+        (let ((curr (car rest))
+              (next (cdr rest)))
+          (cond ((= elem curr)
+                 set)
+                ((> elem curr)
+                 (adjoin-set-iter (append result (list curr))
+                                  next))
+                (else
+                 (append result (list elem) rest))))))
+  (adjoin-set-iter '() set))
+ 
+ the unordered element-of-set? is O(n) and this procedure only take O(n/2) on average
+ 
+ /****************** 2.62 **********************/
+ 
+ ; union-set : set1, set2
+; return the set which is the union of two given sets
+(define (union-set set1 set2)
+  (define (union-set-iter result rest1 rest2)
+    (if (or (null? rest1) (null? rest2))
+        (append result rest1 rest2)
+        (let ((curr1 (car rest1))
+              (curr2 (car rest2)))
+          (cond ((= curr1 curr2)
+                 (union-set-iter (append result (list curr1))
+                                 (cdr rest1)
+                                 (cdr rest2)))
+                ((< curr1 curr2)
+                 (union-set-iter (append result (list curr1))
+                                 (cdr rest1)
+                                 rest2))
+                (else
+                 (union-set-iter (append result (list curr2))
+                                 rest1
+                                 (cdr rest2)))))))
+  (union-set-iter '() set1 set2))
+ 
+ /****************** 2.63 **********************/
+ 
+ both two procedures print out the same right answer
+ 
+ /****************** 2.64 **********************/
+ 
+ skip;
+ 
+ /****************** 2.65 **********************/
+ 
+ (define (intersection-tree tree1 tree2)
+    (list->tree
+        (intersection-set (tree->list-2 tree1)
+                          (tree->list-2 tree2))))
+ 
+ /****************** 2.66 **********************/
+ 
+ ; Exercise 2.66
+
+; lookup : given-key, binary-tree
+; given a key and search for the value in a binary tree
+(define (lookup given-key btree)
+  (cond ((null? btree)
+         #f)
+        ((= given-key (key (car btree)))
+         (entry btree))
+        ((> given-key (key (car btree)))
+         (lookup given-key (right-branch btree)))
+        (else
+         (lookup given-key (left-branch btree)))))
+ 
+ /****************** 2.67 **********************/
+ 
+ > (decode sample-message sample-tree)
+(mcons 'a (mcons 'd (mcons 'a (mcons 'b (mcons 'b (mcons 'c (mcons 'a '())))))))
+ 
+ /****************** 2.68 **********************/
+ 
+ #lang planet neil/sicp
+
+; Exercise 2.68
+
+; encode : message, tree
+; encode a given message with a Huffman tree
+(define (encode message tree)
+  (if (null? message)
+      '()
+      (append (encode-symbol (car message) tree)
+              (encode (cdr message) tree))))
+
+; encode-symbol : char, Huffman-tree
+; return the binary list of the char in Huffman-tree
+(define (encode-symbol char tree)
+  (define (encode-iter result curr-branch)
+    (cond ((leaf? curr-branch)
+           result)
+          ((pair? (memq char (symbols (left-branch curr-branch))))
+           (encode-iter (append result (list 0))
+                        (left-branch curr-branch)))
+          (else
+           (encode-iter (append result (list 1))
+                        (right-branch curr-branch)))))
+  (if (not (pair? (memq char (symbols tree))))
+      (error "not that char -- encode-symbol" char)
+      (encode-iter '() tree)))
+
+; ****************************************************
+
+(define (make-leaf symbol weight)
+  (list 'leaf symbol weight))
+(define (leaf? object)
+  (eq? (car object) 'leaf))
+(define (symbol-leaf x) (cadr x))
+(define (weight-leaf x) (caddr x))
+(define (make-code-tree left right)
+  (list left
+        right
+        (append (symbols left) (symbols right))
+        (+ (weight left) (weight right))))
+
+(define (left-branch tree) (car tree))
+
+(define (right-branch tree) (cadr tree))
+(define (symbols tree)
+  (if (leaf? tree)
+      (list (symbol-leaf tree))
+      (caddr tree)))
+(define (weight tree)
+  (if (leaf? tree)
+      (weight-leaf tree)
+      (cadddr tree)))
+
+(define sample-tree
+    (make-code-tree (make-leaf 'A 4)
+                    (make-code-tree
+                        (make-leaf 'B 2)
+                        (make-code-tree (make-leaf 'D 1)
+                                        (make-leaf 'C 1)))))
+ 
+ ; but I have to input lowercase 'a' instead of 'A' to 
+ ; get a correct answer and I don't know why.
+ 
+ /****************** 2.69 **********************/
+ 
+ #lang planet neil/sicp
+
+; Exercise 2.69
+
+; generate-huffman-tree : pairs-table
+; return a Huffman tree with a pairs table
+(define (generate-huffman-tree pairs)
+  (successive-merge (make-leaf-set pairs)))
+
+; successive-merge : sorted-set
+; merge a weight-set into a huffman tree
+(define (successive-merge set)
+  (define (successive-merge-iter curr)
+    (if (= 1 (length curr))
+        curr
+        (let ((new-node (make-code-tree (car curr)
+                                        (cadr curr))))
+          (successive-merge-iter (adjoin-set new-node
+                                             (cddr curr))))))
+  (if (null? set)
+      '()
+      (successive-merge-iter set)))
+
+; make-leaf-set : pair-table
+; transform the pairs table to a set
+(define (make-leaf-set pairs)
+  (if (null? pairs)
+      '()
+      (let ((pair (car pairs)))
+        (adjoin-set (make-leaf (car pair)    ; symbol
+                               (cadr pair))  ; frequency
+                    (make-leaf-set (cdr pairs))))))
+
+; adjoin-set : elem, set
+; adjoin a elem in to a given set
+(define (adjoin-set x set)
+  (cond ((null? set) (list x))
+        ((< (weight x) (weight (car set))) (cons x set))
+        (else (cons (car set)
+                    (adjoin-set x (cdr set))))))
+
+(define (make-leaf symbol weight)
+  (list 'leaf symbol weight))
+(define (leaf? object)
+  (eq? (car object) 'leaf))
+(define (symbol-leaf x) (cadr x))
+(define (weight-leaf x) (caddr x))
+
+ 
+(define (make-code-tree left right)
+  (list left
+        right
+        (append (symbols left) (symbols right))
+        (+ (weight left) (weight right))))
+  
+(define (left-branch tree) (car tree))
+
+(define (right-branch tree) (cadr tree))
+(define (symbols tree)
+  (if (leaf? tree)
+      (list (symbol-leaf tree))
+      (caddr tree)))
+(define (weight tree)
+  (if (leaf? tree)
+      (weight-leaf tree)
+      (cadddr tree)))
+ 
+ /****************** 2.70 **********************/
+ 
+ 84， 108
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
