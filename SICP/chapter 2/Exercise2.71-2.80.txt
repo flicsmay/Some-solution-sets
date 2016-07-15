@@ -1,0 +1,121 @@
+/***********************************************
+		Exercise 2.71 - 2.80
+***********************************************/
+ 
+ 
+ /****************** 2.71 **********************/
+ 
+ most frequent : 1
+ least frequent : n-1
+ 
+ /****************** 2.72 **********************/
+ 
+ /****************** 2.73 **********************/
+ 
+ a : caz their have no been tagged, as their are unique
+ so we don't have to worry about have to adding anything to them.
+ 
+ b : (define (install-sum-package)
+
+    ;;; internal procedures 
+    (define (addend s)
+        (car s))
+
+    (define (augend s)
+        (cadr s))
+
+    (define (make-sum x y)
+        (cond ((=number? x 0)
+                y)
+              ((=number? y 0)
+                x)
+              ((and (number? x) (number? y))
+                (+ x y))
+              (else
+                (attach-tag '+ x y))))
+
+    ;;; interface to the rest of the system
+    (put 'addend '+ addend)
+    (put 'augend '+ augend)
+    (put 'make-sum '+ make-sum)
+
+    (put 'deriv '+
+        (lambda (exp var)
+            (make-sum (deriv (addend exp) var)
+                      (deriv (augend exp) var))))
+
+'done)
+
+(define (make-sum x y)
+    ((get 'make-sum '+) x y))
+
+(define (addend sum)
+    ((get 'addend '+) (contents sum)))
+
+(define (augend sum)
+    ((get 'augend '+) (contents sum)))
+	
+ /****************** 2.74 **********************/
+ 
+ the implement of this system can uses the data-directed 
+ programming.
+ 
+ /****************** 2.75 **********************/
+ 
+ (define (make-from-mag-ang mag ang)
+  (define (dispatch op)
+    (cond ((eq? op 'real-part)
+           (* mag (cos ang)))
+          ((eq? op 'imag-part)
+           (* mag (sin ang)))
+          ((eq? op 'magnitued) mag)
+          ((eq? op 'angle) ang)
+          (else
+           (error "Unknown op -- MAKE-FROMK-MAG-ANG" op))))
+  dispatch)
+ 
+ /****************** 2.76 **********************/
+ 
+ data-directed style.
+ 
+ /****************** 2.77 **********************/
+ 
+ twice may be. first time take magnitude procedure from 
+ complex number package. second time apply rectangular or polar
+ to their package.
+ 
+ /****************** 2.78 **********************/
+ 
+ (define (attach-tag type-tag contents)
+    (if (number? contents)
+        contents
+        (cons type-tag contents)))
+		
+ (define (type-tag datum)
+    (cond ((number? datum)
+            'scheme-number)
+          ((pair? datum)
+            (car datum))
+          (else
+            (error "Bad tagged datum -- TYPE-TAG" datum))))
+ 
+ (define (contents datum)
+    (cond ((number? datum)
+            datum)
+          ((pair? datum)
+            (cdr datum))
+          (else
+            (error "Bad tagged datum -- CONTENT" datum))))
+ 
+ /****************** 2.79 **********************/
+ 
+ ; equ? : x, y
+; return TRUE if x is equal to y
+(define (equ? x y) (apply-generic 'equ? x y))
+
+ then add equ? operations for all types of number's op.
+ 
+ /****************** 2.80 **********************/
+ 
+ the same as 2.79, as get pro and put pro are not provided
+ I just skip it.
