@@ -1,0 +1,182 @@
+/***********************************************
+		Exercise 2.81 - 2.90
+***********************************************/
+ 
+ 
+ /****************** 2.81 **********************/
+ 
+ a : the program will drop into an infinity loop.
+ 
+ b : nope
+ 
+ c : 
+ (define (apply-generic op . args)
+    (let ((type-tags (map type-tag args)))
+        (let ((proc (get op type-tags)))
+            (if proc
+                (apply proc (map contents args))
+                (if (= (length args) 2)
+                    (let ((type1 (car type-tags))
+                          (type2 (cadr type-tags))
+                          (a1 (car args))
+                          (a2 (cadr args)))
+                        (if (equal? type1 type2)  ; if two types are equal then complain the mistaken    
+                            (error "No method for these types" (list op type-tags))
+                            (let ((t1->t2 (get-coercion type1 type2))
+                                  (t2->t1 (get-coercion type2 type1)))
+                                (cond (t1->t2
+                                        (apply-generic op (t1->t2 a1) a2))
+                                      (t2->t1
+                                        (apply-generic op a1 (t2->t1 a2)))
+                                      (else
+                                        (error "No method for these types"
+                                                (list op type-tags)))))))
+                    (error "No method for these types"
+                            (list op type-tags)))))))
+ 
+ /****************** 2.82 **********************/
+ 
+ 
+ ; apply-generic
+
+(define (apply-generic op . args)
+    (let ((type-tags (map type-tag args)))
+        (let ((proc (get op type-tags)))
+            (if proc
+                (apply proc (map contents args))
+                (let ((result (get-coercion-list type-tags args)))
+                  (if result
+                      (let ((type-tags (map type-tag result)))
+                        (let ((proc (get op type-tags)))
+                          (apply proc (map contents result))))
+                      (error "No method for these types" (list op type-tags))))))))
+
+; get-coercion-list : type-list, args-list
+; if the list can be transformed to a list that have a same type
+; then return the transformed list otherwise return FALSE
+(define (get-coercion-list type-args args)
+  (define (iter rest)
+    (if (null? rest)
+        #f
+        (let ((current (car rest)))
+          (let ((result (all-coercion? current type-args args)))
+            (if result
+                result
+                (iter (cdr rest)))))))
+  (iter type-args))
+
+; all-coercion : type(compared), type-list, args-list
+; if all elements in type-list can be transformed to given type
+; then return the transformed list otherwise return FALSE
+(define (all-coercion? type type-args args)
+  (define (iter rest-types rest-args result)
+    (if (null? rest-types)
+        result
+        (let ((curr-type (car rest-types))
+              (next-type (cdr rest-types))
+              (curr-arg (car rest-args))
+              (next-arg (cdr rest-args))
+              (coer-op (get-coercion (car rest-types) 
+                                     type))
+              )
+          (cond ((eq? type curr-type)
+                 (iter next-type 
+                       next-arg 
+                       (append result (list curr-arg))))
+                (coer-op
+                 (iter next-type
+                       next-arg 
+                       (append result (list (coer-op curr-arg)))))
+                (else
+                 #f)))))
+  (iter type-args args '()))
+  
+  test:
+ 
+(put-coercion 'number 'square-number square)
+> (define z '(number number square-number number))
+> (all-coercion? 'square-number z (list 4 4 4 4))
+'ok
+#<procedure:>>
+#<procedure:>>
+(mcons 16 (mcons 16 (mcons 4 (mcons 16 '()))))
+
+> (put-coercion 'number 'square-number square)
+'ok
+> (define z '(number number square-number number))
+> (get-coercion-list z (list 4 4 4 4))
+(mcons 16 (mcons 16 (mcons 4 (mcons 16 '()))))
+> 
+> (define (scheme2complex num)
+  (make-complex-from-real-imag num 0))
+> (put-coercion 'scheme-number 'complex scheme2complex)
+> (install-all)
+> (define a (make-scheme-number 5))
+> (define b (make-complex-from-real-imag 4 5))
+> (add a b)
+#<procedure:>>
+'ok
+#<procedure:>>
+'done
+#<procedure:>>
+#<procedure:>>
+#<procedure:>>
+(mcons 'complex (mcons 'rectangular (mcons 9 5)))
+ 
+ /****************** 2.83 **********************/
+ 
+ (define (scheme2complex num)
+  (make-from-real-imag num 0))
+
+(define (raise-to-rational scheme-num)
+  (make-rational (contents scheme-num) 1))
+
+(put 'raise 'scheme-number raise-to-rational)
+
+(define (raise-to-real rational-num)
+  (make-real (/ (numer rational-num) (demon rational-num))))
+
+(put 'raise 'rational raise-to-real)
+
+(define (raise-to-complex real-num)
+  (make-complex-from-real-imag (contents real-num) 0))
+
+(put 'raise 'real raise-to-complex)
+
+(define (raise x) (apply-generic 'raise x))
+ 
+ /****************** 2.84 **********************/
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
