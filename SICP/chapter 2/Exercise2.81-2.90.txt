@@ -147,18 +147,165 @@
  
  /****************** 2.84 **********************/
  
+ ; apply-generic
+
+(define (apply-generic op . args)
+    (let ((type-tags (map type-tag args)))
+        (let ((proc (get op type-tags)))
+            (if proc
+                (apply proc (map contents args))
+                (if (= (length args) 2)
+                    (let ((type1 (car type-tags))
+                          (type2 (cadr type-tags))
+                          (a1 (car args))
+                          (a2 (cadr args)))
+                        (let ((comparison (which-is-higher type1 type2)))
+                          (cond ((= 0 comparison)
+                                 (error "No method for these types" (list op type-tags)))
+                                ((= 1 comparison)
+                                 (let ((a1 (raise-to-type type2 a1)))
+                                   (apply-generic op a1 a2)))
+                                ((= -1 comparison)
+                                 (let ((a2 (raise-to-type type1 a2)))
+                                   (apply-generic op a1 a2)))
+                                (else
+                                 (error "Unkonwn mistaken..")))))
+                                
+                    (error "No method for these types"
+                            (list op type-tags)))))))
+
+(define (get-level type)
+  (cond ((eq? 'scheme-number type)
+         0)
+        ((eq? 'rational type)
+         1)
+        ((eq? 'complex type)
+         2)
+        (else
+         (error "Unkonwn-type -- GET-LEVEL" (list type)))))
+
+(define (which-is-higher type1 type2)
+  (let ((lv1 (get-level type1))
+        (lv2 (get-level type2)))
+    (cond ((= lv1 lv2)
+           0)
+          ((< lv1 lv2)
+           1)
+          ((> lv1 lv2)
+           -1)
+          (else
+           (error "Unkonwn mistaken -- WHICH-IS-HIGER" (list type1 type2))))))
+
+(define (raise-to-type type val)
+  (let ((level (get-level type)))
+    (define (iter result)
+      (let ((curr-level (get-level (type-tag result))))
+        (if (= curr-level level)
+            result
+            (iter (raise result)))))
+    (iter val)))
  
+ ; full code can be found in 2.84.rsk
  
+ /****************** 2.85 **********************/
  
+ ; complex-number
+  
+  (define (project-to-real complex-num)
+    (make-real (real-part complex-num)))
  
+  (put 'project '(complex) project-to-real)
+  
+  (put 'equ? '(complex complex)
+        (lambda (x y)
+            (and (= (real-part x) (real-part y))
+                 (= (imag-part x) (imag-part y)))))
+  
+  ; real-number
+  
+  (define (project-to-rational real)
+    (define accuracy 0.001)
+    (define (whole-number? n)
+      (= (round n) n))
+    (define (iter numer denom)
+      (let ((numer-appro (round numer)))
+        (let ((curr (/ numer denom))
+              (appro (/ numer-appro denom)))
+          (if  (< (abs (- appro curr))
+                  accuracy)
+               (make-rational numer denom)
+               (iter (* numer 10) (* denom 10))))))
+    (iter real 1))
+  
+  (put 'project '(real) project-to-rational)
+  
+  (put 'equ? '(real real)
+       (lambda (x y) (= x y)))
+  
+  
+  ; rational-number
+  
+  (define (project-to-integer rational)
+    (make-scheme-number (round (/ (numer rational)
+                                  (denom rational)))))
+  
+  (put 'project '(rational) project-to-integer)
+  
+  (put 'equ? '(rational rational)
+        (lambda (x y)
+            (and (= (numer x) (numer y))
+                 (= (denom x) (denom y)))))
+  
+  ; scheme-number
+    
+  
+  (put 'equ? '(scheme-number scheme-number)
+       (lambda (x y) (= x y)))
+  
+  
+  ; global procedure
+  
+  (define (project n)
+    (apply-generic 'project n))
+  
+  (define (equ? x y)
+    (apply-generic 'equ? x y))
+  
+  (define (can-be-dropped? n)
+    (if (get 'project (list (type-tag n)))
+        (let ((projected (project n)))
+          (if (get 'raise (list (type-tag projected)))
+              (let ((retrived (raise projected)))
+                (equ? retrived n))
+              #f))
+        #f))
+  
+  (define (drop n)
+    (define (drop-iter current)
+      (if (can-be-droped? current)
+          (drop-iter (project current))
+          current))
+    (drop-iter n))
  
+ /****************** 2.86 **********************/
  
+  (define (add-complex z1 z2) 
+   (make-from-real-imag (add (real-part z1) (real-part z2)) 
+                        (add (imag-part z1) (imag-part z2)))) 
+ (define (sub-complex z1 z2) 
+   (make-from-real-imag (sub (real-part z1) (real-part z2)) 
+                        (sub (imag-part z1) (imag-part z2)))) 
+ (define (mul-complex z1 z2) 
+   (make-from-mag-ang (mul (magnitude z1) (magnitude z2)) 
+                      (add (angle z1) (angle z2)))) 
+ (define (div-complex z1 z2) 
+   (make-from-mag-ang (div (magnitude z1) (magnitude z2)) 
+                      (sub (angle z1) (angle z2)))) 
+  
+  
+  then add the sine and cosine procedure into package.
  
- 
- 
- 
- 
- 
+ /****************** 2.87 **********************/
  
  
  
