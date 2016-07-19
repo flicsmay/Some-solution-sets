@@ -1,0 +1,45 @@
+;#lang planet neil/sicp
+
+; real-numbers-package
+(define (install-real-package)
+  (define (tag x)
+    (attach-tag 'real x))
+  
+  ; raise real numbers to complex
+  
+  (define (raise-to-complex real-num)
+    (make-complex-from-real-imag real-num 0))
+  
+  (define (project-to-rational real)
+    (define accuracy 0.000001)
+    (define (whole-number? n)
+      (= (round n) n))
+    (define (iter numer denom)
+      (let ((numer-appro (round numer)))
+        (let ((appro (/ numer-appro denom)))
+          (if  (< (abs (- appro real))
+                  accuracy)
+               (make-rational numer-appro denom)
+               (iter (* numer 10) (* denom 10))))))
+    (if (number? (contents (drop (real))))
+        (iter real 1)
+        #f))
+  
+  (put 'project '(real) project-to-rational)
+  
+  (put 'equ? '(real real)
+       (lambda (x y) (equ? x y)))
+  
+  (put 'raise '(real) raise-to-complex)
+  
+  (put 'add '(real real)
+       (lambda (x y) (tag (add x y))))
+  (put 'sub '(real real)
+       (lambda (x y) (tag (sub x y))))
+  (put 'mul '(real real)
+       (lambda (x y) (tag (mul x y))))
+  (put 'div '(real real)
+       (lambda (x y) (tag (div x y))))
+  (put 'make 'real
+       (lambda (x) (tag x)))
+  'done)

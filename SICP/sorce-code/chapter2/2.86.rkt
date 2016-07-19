@@ -229,7 +229,7 @@
     (attach-tag 'real x))
   
   (define (raise-to-complex real-num)
-    (make-complex-from-real-imag real-num 0))
+    (make-complex-from-real-imag real-num (make-scheme-number 0)))
   
   (define (project-to-rational real)
     (define accuracy 0.000001)
@@ -352,8 +352,8 @@
   
   (put 'equ? '(complex complex)
         (lambda (x y)
-            (and (= (real-part x) (real-part y))
-                 (= (imag-part x) (imag-part y)))))
+            (and (equ? (real-part x) (real-part y))
+                 (equ? (imag-part x) (imag-part y)))))
   (define (tag z) (attach-tag 'complex z))
   (put 'add '(complex complex)
        (lambda (z1 z2) (tag (add-complex z1 z2))))
@@ -433,3 +433,4 @@
         (drop-iter (project current))
         current))
   (drop-iter n))
+
