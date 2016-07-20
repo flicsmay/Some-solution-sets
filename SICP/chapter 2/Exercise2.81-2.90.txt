@@ -322,10 +322,25 @@
  
  /****************** 2.88 **********************/
  
+   (put 'sub '(polynomial polynomial)
+       (lambda (p1 p2) (let ((neg-p2 (neg (tag p2)))
+                             (new-p1 (tag p1)))
+                         (add new-p1 neg-p2))))
+						
+ (put 'neg '(polynomial) negation-poly)
  
+ (define (negation-poly x)
+    (define (iter rest)
+      (if (empty-termlist? rest)
+          (the-empty-termlist)
+          (let ((ft (first-term rest)))
+            (adjoin-term (make-term (order ft)
+                                    (neg (coeff ft)))
+                         (iter (rest-terms rest))))))
+    (tag (make-poly (variable x)
+                    (iter (term-list x)))))
  
- 
- 
+ /**************** 2.89 & 2.90  ******************/
  
  
  

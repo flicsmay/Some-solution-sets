@@ -1,0 +1,15 @@
+#lang planet neil/sicp
+
+(define (install-all)
+  (load "scheme\\numbers-package\\get-put-package.rkt")
+  (load "scheme\\numbers-package\\apply-generic-package.rkt")
+  (load "scheme\\numbers-package\\global-procedure.rkt")
+  (load "scheme\\numbers-package\\rectangular-package.rkt")
+  (load "scheme\\numbers-package\\polar-package.rkt")
+  (load "scheme\\numbers-package\\scheme-number-package.rkt")
+  (load "scheme\\numbers-package\\rational-package.rkt")
+  (load "scheme\\numbers-package\\real-package.rkt")
+  (load "scheme\\numbers-package\\complex-package.rkt")
+  (load "scheme\\numbers-package\\install-numbers-package.rkt")
+  ; (install-numbers-package)
+  'done)

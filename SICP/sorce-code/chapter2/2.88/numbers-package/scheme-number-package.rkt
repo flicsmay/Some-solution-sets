@@ -1,0 +1,37 @@
+;#lang planet neil/sicp
+
+; all these operations are take one or two
+; raw numbers and tag them a 'scheme-number
+(define (install-scheme-number-package)
+  ; add-tag
+  (define (tag x)
+    (attach-tag 'scheme-number x))
+  ; raise to upper level
+  (define (raise-to-rational scheme-num)
+    (make-rational scheme-num 1))
+  
+  (put 'raise '(scheme-number) raise-to-rational)
+  
+  (put 'equ? '(scheme-number scheme-number)
+       (lambda (x y) (= x y)))
+  
+  (put 'sine 'scheme-number 
+      (lambda (x) (tag (sin x)))) 
+  (put 'cosine 'scheme-number 
+      (lambda (x) (tag (cos x))))
+  
+  (put 'neg '(scheme-number)
+       (lambda (x) (make-scheme-number (- x))))
+  (put '=zero? '(scheme-number)
+       (lambda (x) (= 0 x)))
+  (put 'add '(scheme-number scheme-number)
+       (lambda (x y) (tag (+ x y))))
+  (put 'sub '(scheme-number scheme-number)
+       (lambda (x y) (tag (- x y))))
+  (put 'mul '(scheme-number scheme-number)
+       (lambda (x y) (tag (* x y))))
+  (put 'div '(scheme-number scheme-number)
+       (lambda (x y) (tag (/ x y))))
+  (put 'make 'scheme-number
+       (lambda (x) (tag (round x))))
+  'done)

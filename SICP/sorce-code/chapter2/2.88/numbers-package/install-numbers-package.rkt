@@ -1,0 +1,10 @@
+;#lang planet neil/sicp
+
+(define (install-numbers-package)
+  (install-scheme-number-package)
+  (install-rational-package)
+  (install-real-package)
+  (install-rectangular-package)
+  (install-polar-package)
+  (install-complex-package)
+  'done)
