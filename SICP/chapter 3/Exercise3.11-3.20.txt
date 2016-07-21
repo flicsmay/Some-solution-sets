@@ -1,0 +1,120 @@
+/***********************************************
+		Exercise 3.11 - 3.20
+***********************************************/
+ 
+ 
+ /****************** 3.11 **********************/
+ 
+ they creat two distined environments.
+ there are no any part of environment shared by two vars.
+ 
+ /****************** 3.12 **********************/
+ 
+ (mcons 'b '())
+ (mcons 'b (mcons 'c (mcons 'd '())))
+ 
+ /****************** 3.13 **********************/
+ 
+ as it's name it make a cycle
+ 
+ /****************** 3.14 **********************/
+ 
+ w : (mcons 'd (mcons 'c (mcons 'b (mcons 'a '()))))
+ v : (mcons 'a '())
+ 
+ /****************** 3.15 **********************/
+ 
+ first procedure set x to (cons 'wow b)
+ the second procedure set the second a-pointer pointing
+ to a 'wow.
+ 
+ /****************** 3.16 **********************/
+ 
+ (define three (cons (cons 1 2) (cons 3 4)))
+(define w (cons 3 4))
+(define x (cons w w))
+(define four (cons x 1))
+(define y (cons 1 2))
+(define z (cons y y))
+(define seven (cons z z))
+
+(define a (cons 1 2))
+(define b (cons 3 4))
+(define c (cons 5 6))
+(define (infinite)
+  (begin (set-car! a b)
+         (set-car! b c)
+         (set-car! c a)
+         a))
+ 
+ > (infinite)
+#0=(mcons (mcons (mcons #0# 6) 4) 2)
+> (count-pairs a)
+
+Interactions disabled
+ 
+ /****************** 3.17 **********************/
+ 
+ (define (count-pairs pairs)
+  (define pairs-table (list 'head))
+  
+  (define (have-been-counted? pair)
+    (memq pair pairs-table))
+  
+  (define (tagged-pairs pair)
+    (append! pairs-table (list pair)))
+  (define (count-pairs-iter curr)
+    (if (or (null? curr) (not (pair? curr)))
+        0
+        (if (have-been-counted? curr)
+            0
+            (begin (tagged-pairs curr)
+                   (+ (count-pairs-iter (car curr))
+                      (count-pairs-iter (cdr curr))
+                      1)))))
+  (count-pairs-iter pairs))
+ 
+ /****************** 3.18 **********************/
+ 
+ (define (is-infinite-loop-v1 lst)
+  
+  (define node-table (list 'head))
+  (define (have-visited? pair)
+    (memq pair node-table))
+  (define (add-in-table pair)
+    (append! node-table (list pair)))
+  
+  (define (iter pair)
+    (if (or (null? pair) (not (pair? pair)))
+        #f
+        (if (have-visited? pair)
+            #t
+            (begin (add-in-table pair)
+                   (iter (cdr pair))))))
+  (iter lst))
+ 
+ /****************** 3.19 **********************/
+ 
+ (define (is-infinite-loop-v2 lst)
+  (define (go-forward step num)
+    (if (or (null? step) (= num 0))
+        step 
+        (go-forward (cdr step)
+                    (- num 1))))
+  
+  (define (iter step1 step2)
+    (if (or (null? step1) (null? step2))
+           #f
+        (let ((curr1 (go-forward step1 1))
+              (curr2 (go-forward step2 2)))
+          (if (eq? curr1 curr2)
+              #t
+              (iter curr1 curr2)))))
+  (iter lst lst))
+ 
+ /****************** 3.20 **********************/
+ 
+ skip;
+ 
+ 
+ 
