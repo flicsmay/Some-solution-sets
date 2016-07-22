@@ -1,11 +1,10 @@
-This repository is used to save my solution sets</br>
-</br>
-Full comments are writen in English, since I want to improve my poor English :)</br>
-</br>
-</br>
-I will update my answer if I get enough times to do so.</br>
-And I will glad to see if someone find my mistaken and set a email to correct me.</br>
-</br>
-</br>
-****************************</br>
-startint the CSAPP 
+#Solution sets
+
+This repository is used to save my solution sets.
+
+* [Solution to CSAPP](https://github.com/flicsmay/Some-solution-sets/tree/master/CSAPP)
+* [Solution to SICP](https://github.com/flicsmay/Some-solution-sets/tree/master/SICP)
+
+I write all the note in English caz I want to improve my English writting.
+
+~~but seems to useless....~~
