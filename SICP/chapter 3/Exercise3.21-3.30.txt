@@ -1,0 +1,299 @@
+/***********************************************
+		Exercise 3.21 - 3.30
+***********************************************/
+ 
+ 
+ /****************** 3.21 **********************/
+ 
+ (define (print-queue que)
+  (car que))
+ 
+ /****************** 3.22 **********************/
+ 
+ (define (make-queue)
+    (let ((front-ptr '())
+          (rear-ptr '()))
+        (define (insert-queue! item)
+            (cond ((empty-queue?)
+                    (let ((init-list (list item)))
+                        (set! front-ptr init-list)
+                        (set! rear-ptr init-list)
+                        front-ptr))
+                  (else
+                    (let ((new-item (list item)))
+                        (set-cdr! rear-ptr new-item)
+                        (set! rear-ptr new-item)
+                        front-ptr))))
+        (define (delete-queue!)
+            (cond ((empty-queue?)
+                    (error "DELETE! called with an empty queue" queue))
+                  (else
+                    (set! front-ptr (cdr front-ptr))
+                    front-ptr)))
+        (define (empty-queue?)
+            (null? front-ptr))
+        (define (dispatch m)
+            (cond ((eq? m 'insert-queue!)
+                    insert-queue!)
+                  ((eq? m 'delete-queue!)
+                    (delete-queue!))
+                  ((eq? m 'empty-queue?)
+                    (empty-queue?))
+                  (else
+                    (error "Unknow operation -- DISPATCH" m))))
+        dispatch))
+ 
+ /****************** 3.23 **********************/
+ 
+ ; Exercise 3.23
+
+(define (front-ptr deque) (car deque))
+(define (rear-ptr deque) (cdr deque))
+
+(define (set-front-ptr! deque item) (set-car! deque item))
+(define (set-rear-ptr! deque item) (set-cdr! deque item))
+
+(define (empty-deque? deque) (null? (front-ptr deque)))
+
+(define (front-deque deque)
+  (if (empty-deque? deque)
+      (error "FRONT called with an empty deque" deque)
+      (car (front-ptr deque))))
+
+(define (rear-deque deque)
+  (if (empty-deque? deque)
+      (error "REAR called with an empty deque" deque)
+      (cdr (rear-ptr deque))))
+
+
+(define (make-new-node item)
+  (cons item (cons '() '())))
+
+(define (next-node node)
+  (cddr node))
+
+(define (prev-node node)
+  (cadr node))
+
+(define (set-prev-node! node prev-node)
+  (set-car! (cdr node) prev-node))
+
+(define (set-next-node! node next-node)
+  (set-cdr! (cdr node) next-node))
+
+(define (front-insert-deque! deque item)
+  (let ((new-pair (make-new-node item)))
+    (cond ((empty-deque? deque)
+           (set-front-ptr! deque new-pair)
+           (set-rear-ptr! deque new-pair)
+           deque)
+          (else
+           (let ((front-node (front-ptr deque)))
+             (set-next-node! new-pair front-node)
+             (set-prev-node! front-node new-pair)
+             (set-front-ptr! deque new-pair)
+             deque)))))
+
+
+(define (rear-insert-deque! deque item)
+  (let ((new-pair (make-new-node item)))
+    (cond ((empty-deque? deque)
+           (set-front-ptr! deque new-pair)
+           (set-rear-ptr! deque new-pair)
+           deque)
+          (else
+           (let ((rear-node (rear-ptr deque)))
+             (set-prev-node! new-pair rear-node)
+             (set-next-node! rear-node new-pair)
+             (set-rear-ptr! deque new-pair)
+             deque)))))
+
+
+(define (front-delete-deque! deque)
+  (cond ((empty-deque? deque)
+         (error "DELETE! called with an empty deque" deque))
+        ((eq? (front-ptr deque) (rear-ptr deque))
+         (set-rear-ptr! deque '())
+         (set-front-ptr! deque '()))
+        (else
+         (set-front-ptr! deque (next-node (front-ptr deque)))
+         (set-prev-node! (rear-ptr deque) '())
+         deque)))
+
+(define (rear-delete-deque! deque)
+  (cond ((empty-deque? deque)
+         (error "DELETE! called with an empty deque" deque))
+        ((eq? (front-ptr deque) (rear-ptr deque))
+         (set-rear-ptr! deque '())
+         (set-front-ptr! deque '()))
+        (else
+         (set-rear-ptr! deque (prev-node (rear-ptr deque)))
+         (set-next-node! (rear-ptr deque) '())
+         deque)))
+
+(define (print-deque deque)
+  (define (iter rest result)
+    (if (null? rest)
+        result
+        (let ((next (next-node rest)))
+          (iter next (append result 
+                             (list (car rest)))))))
+  (if (empty-deque? deque)
+      '()
+      (iter (front-ptr deque) '())))
+ 
+ /****************** 3.24 **********************/
+ 
+ (define (make-table same-key?)
+  (define (assoc key records)
+            (cond ((null? records)
+                    #f)
+                  ((same-key? key (caar record))
+                    (car records))
+                  (else
+                    (assoc key (cdr records)))))
+  
+  ; all remainding procedrues are the same as before
+ 
+ 
+ /****************** 3.25 **********************/
+ 
+(define (look-up key . rest-keys)
+  (define (iter-find rest-key-list curr-table)
+    (let ((curr-key (car rest-key-list))
+          (rest-keys (cdr rest-key-list)))
+      (let ((key-finded (find-key-in-table curr-key curr-table)))
+        (if key-finded
+            (if (more-keys rest-keys)
+                (let ((next-table (key-value key-finded)))
+                  (iter-find rest-keys next-table))
+                (key-value key-finded))))))
+  (iter-find (cons key rest-keys)
+             local-table))
+              
+
+(define (insert! value . keys)
+  (define (iter-insert rest-keys-list curr-table)
+    (let ((curr-key (car rest-key-list))
+          (rest-keys (cdr rest-key-list)))
+      (let ((key-finded (find-key-in-table curr-key curr-table)))
+        (if key-finded
+            (if (more-keys rest-keys)
+                (let ((next-table (key-value key-finded)))
+                  (iter-insert rest-keys next-table))
+                (set-key-value key-finded value))
+            (let ((new-table (make-new-table curr-key)))
+              (add-newtable-to-table new-table curr-table)
+              (if (more-keys rest-keys)
+                  (iter-insert rest-keys new-table)
+                  (set-key-value (car new-table))))))))
+  (if (null? keys)
+      (error "NO keys input")
+      (iter-insert keys local-table)))
+	  
+ ; pseudocode implement
+ 
+ /****************** 3.26 **********************/
+ 
+ (define (find-value-by-a-key key table)
+  (define (find-iter curr-key)
+    (if (empty-key? curr-key)
+        false
+        (let ((comparsion (compare-key (get-key curr-key) key)))
+          (cond ((= comparsion 0)
+                 (get-value curr-key))
+                ((= comparsion 1)
+                 (find-iter (right-branch curr-key)))
+                ((= comparsion -1)
+                 (find-iter (left-branch curr-key)))
+                (else
+                 (error "get a error in comparsion -- find-value-by-a-key ")))))
+    (find-iter (key-list-table table))))
+
+(define (insert-value-in-a-table value key table)
+  (define (insert-iter curr-key)
+    (let ((comparsion (compare-key (get-key curr-key) key)))
+      (cond ((= comparsion 0)
+             (set-key-value curr-key value))
+            ((= comparsion 1)
+             (let ((next-node (right-branch curr-key)))
+               (if (empty-key? next-node)
+                   (set-right-node key value curr-key)
+                   (insert-iter (right-branch curr-key)))))
+            ((= comparsion -1)
+             (let ((next-node (left-branch curr-key)))
+               (if (empty-key? next-node)
+                   (set-left-node key value curr-key)
+                   (insert-iter (left-branch curr-key)))))
+            (else
+             (error "get a error in comparsion -- find-value-by-a-key ")))))
+  (insert-iter (key-list-table table)))
+ 
+ /****************** 3.27 **********************/
+ 
+ the procedrue won't work, because it never applies to memorize.
+ 
+ /****************** 3.28 **********************/
+ 
+ (define (or-gate input-1 input-2 output)
+    (define (or-action-procedure)
+        (let ((new-value
+                (logical-or (get-signal input-1) (get-signal input-2))))
+            (after-delay or-gate-delay
+                         (lambda ()
+                            (set-signal! output new-value)))))
+    (add-action! input-1 or-action-procedure)
+    (add-action! input-2 or-action-procedure)
+    'ok)
+
+(define (logical-or x y)
+    (if (or (= x 1) (= y 1))
+        1
+        0))
+ 
+ /****************** 3.29 **********************/
+ 
+ (define (or-gate input-1 input-2 output)
+    (let ((invert-1 (make-wire))
+          (invert-2 (make-wire))
+          (and-invert-1-invert-2 (make-wire)))
+        (inverter input-1 invert-1)
+        (inverter input-2 invert-2)
+        (and-gate invert-1 invert-2 and-invert-1-invert-2)
+        (inverter and-invert-1-invert-2 output))
+    'ok) 
+ 
+ /****************** 3.30 **********************/
+ 
+ (define (ripple-carry-adder list-A list-B list-S C)
+    (define (iter A B S value-of-c)
+        (if (and (null? A) (null? B) (null? S))
+            'ok
+            (let ((Ak (car A))
+                  (Bk (car B))
+                  (Sk (car S))
+                  (remain-A (cdr A))
+                  (remain-B (cdr B))
+                  (remain-S (cdr S))
+                  (Ck (make-wire)))
+                (set-signal! Ck value-of-c)
+                (full-adder Ak Bk Ck Sk C)
+                (iter remain-A remain-B remain-S (get-signal C)))))
+    (iter list-A list-B list-S (get-signal C)))
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
