@@ -58,7 +58,7 @@ A bit modification in proc-pairs (pairs t u) to provide pairs whose t <= u
 	   (merge-weighted
 	    (stream-map (lambda (x) (list (stream-car s) x))
 	                (stream-cdr t))
-	    (pairs (stream-cdr s) (stream-cdr t))
+	    (pairs (stream-cdr s) (stream-cdr t) weighting-fun)
 	    weighting-fun)))
 	
 	(define (merge-weighted s1 s2 weight)
