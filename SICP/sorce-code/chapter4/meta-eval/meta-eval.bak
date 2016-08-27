@@ -1,0 +1,17 @@
+#lang planet neil/sicp
+
+; metacircular evaluator
+
+(define metacir-eval-path "c:\\users\\admin\\scheme\\chapter4\\meta-eval\\")
+
+(define (install-meta-eval)
+  (load (string-append metacir-eval-path "tools.rkt"))
+  (load (string-append metacir-eval-path "environment-pro.rkt"))
+  (load (string-append metacir-eval-path "primitive-procedure.rkt"))
+  (load (string-append metacir-eval-path "cases-in-eval.rkt"))
+  (load (string-append metacir-eval-path "eval-apply.rkt"))
+  'done)
+
+;(install-meta-eval)
+;(define the-global-environment (setup-environment))
+;(driver-loop)

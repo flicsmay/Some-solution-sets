@@ -1,0 +1,8 @@
+#lang planet neil/sicp
+
+; analyze-eval 
+
+(define analyze-eval-path "c:\\users\\admin\\scheme\\chapter4\\analyze-eval\\")
+
+(define (install-analyze-eval)
+  (load (string-append analyze-eval-path

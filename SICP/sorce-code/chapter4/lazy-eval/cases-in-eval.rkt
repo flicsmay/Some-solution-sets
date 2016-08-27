@@ -1,0 +1,139 @@
+;#lang planet neil/sicp
+
+; each cases in evaln
+
+(define (list-of-values exps env)
+  (if (no-operands? exps)
+      '()
+      (cons (evaln (first-operand exps) env)
+            (list-of-values (rest-operands exps) env))))
+
+(define (eval-sequence exps env)
+  (cond ((last-exp? exps) (evaln (first-exp exps) env))
+        (else (evaln (first-exp exps) env)
+              (eval-sequence (rest-exps exps) env))))
+
+; ************ self evalnuating **************
+
+(define (self-evaluating? exp)
+  (cond ((number? exp) true)
+        ((string? exp) true)
+        (else false)))
+
+; ************ variable **************
+
+(define (variable? exp) (symbol? exp))
+
+; ************ quoted **************
+
+(define (quoted? exp)
+  (tagged-list? exp 'quote))
+
+(define (text-of-quotation exp) (cadr exp))
+
+; ************ assignment **************
+
+(define (eval-assignment exp env)
+  (set-variable-value! (assignment-variable exp)
+                       (evaln (assignment-value exp) env)
+                       env)
+  'ok)
+
+(define (assignment? exp)
+  (tagged-list? exp 'set!))
+(define (assignment-variable exp) (cadr exp))
+(define (assignment-value exp) (caddr exp))
+
+; ************ difinition **************
+
+(define (eval-definition exp env)
+  (define-variable! (definition-variable exp)
+                    (evaln (definition-value exp) env)
+                    env)
+  'ok)
+
+(define (definition? exp)
+  (tagged-list? exp 'define))
+(define (definition-variable exp)
+  (if (symbol? (cadr exp))
+      (cadr exp)
+      (caadr exp)))
+(define (definition-value exp)
+  (if (symbol? (cadr exp))
+      (caddr exp)
+      (make-lambda (cdadr exp)   ; formal parameters
+                   (cddr exp)))) ; body
+
+; ************ lambda **************
+
+(define (lambda? exp) (tagged-list? exp 'lambda))
+(define (lambda-parameters exp) (cadr exp))
+(define (lambda-body exp) (cddr exp))
+
+(define (make-lambda parameters body)
+  (cons 'lambda (cons parameters body)))
+
+; ************ if **************
+
+(define (eval-if exp env)
+  (if (true? (actual-value (if-predicate exp) env))
+      (evaln (if-consequent exp) env)
+      (evaln (if-alternative exp) env)))
+
+(define (if? exp) (tagged-list? exp 'if))
+(define (if-predicate exp) (cadr exp))
+(define (if-consequent exp) (caddr exp))
+(define (if-alternative exp)
+  (if (not (null? (cdddr exp)))
+      (cadddr exp)
+      'false))
+
+(define (make-if predicate consequent alternative)
+  (list 'if predicate consequent alternative))
+
+; ************ begin **************
+
+(define (begin? exp) (tagged-list? exp 'begin))
+(define (begin-actions exp) (cdr exp))
+
+(define (make-begin seq) (cons 'begin seq))
+
+; ************ application **************
+
+(define (application? exp) (pair? exp))
+
+; ************ let **************
+
+(define (let? exp) (tagged-list? exp 'let)) 
+(define (let-vars exp) (map car (cadr exp))) 
+(define (let-inits exp) (map cadr (cadr exp))) 
+(define (let-body exp) (cddr exp)) 
+
+(define (let->combination exp) 
+  (cons (make-lambda (let-vars exp) (let-body exp)) 
+        (let-inits exp)))
+
+; ************ cond **************
+
+(define (cond? exp) (tagged-list? exp 'cond))
+(define (cond-clauses exp) (cdr exp))
+(define (cond-else-clause? clause)
+  (eq? (cond-predicate clause) 'else))
+(define (cond-predicate clause) (car clause))
+(define (cond-actions clause) (cdr clause))
+(define (cond->if exp)
+  (expand-clauses (cond-clauses exp)))
+
+(define (expand-clauses clauses)
+  (if (null? clauses)
+      'false                          ; no else clause
+      (let ((first (car clauses))
+            (rest (cdr clauses)))
+        (if (cond-else-clause? first)
+            (if (null? rest)
+                (sequence->exp (cond-actions first))
+                (error "ELSE clause isn't last -- COND->IF"
+                       clauses))
+            (make-if (cond-predicate first)
+                     (sequence->exp (cond-actions first))
+                     (expand-clauses rest))))))

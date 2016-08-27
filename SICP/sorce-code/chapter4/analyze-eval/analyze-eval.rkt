@@ -1,0 +1,16 @@
+#lang planet neil/sicp
+
+; analyze-eval 
+
+(define analyze-eval-path "c:\\users\\admin\\scheme\\chapter4\\analyze-eval\\")
+
+(define (install-analyze-eval)
+  (load (string-append analyze-eval-path "tools.rkt"))
+  (load (string-append analyze-eval-path "cases-tools.rkt"))
+  (load (string-append analyze-eval-path "environment-pro.rkt"))
+  (load (string-append analyze-eval-path "primitive-procedure.rkt"))
+  (load (string-append analyze-eval-path "cases.rkt"))
+  (load (string-append analyze-eval-path "eval-analyze.rkt"))
+  'done)
+
+;(install-analyze-eval)(define the-global-environment (setup-environment))(driver-loop)

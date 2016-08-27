@@ -1,0 +1,17 @@
+#lang planet neil/sicp
+
+; lazy evaluator
+
+(define lazy-eval-path "c:\\users\\admin\\scheme\\chapter4\\lazy-eval\\")
+
+(define (install-lazy-eval)
+  (load (string-append lazy-eval-path "tools.rkt"))
+  (load (string-append lazy-eval-path "force-thunk.rkt"))
+  (load (string-append lazy-eval-path "environment-pro.rkt"))
+  (load (string-append lazy-eval-path "primitive-procedure.rkt"))
+  (load (string-append lazy-eval-path "cases-in-eval.rkt"))
+  (load (string-append lazy-eval-path "eval-apply.rkt"))
+  'done)
+
+;(install-lazy-eval)(define the-global-environment (setup-environment))(driver-loop)
+;(define (try a b) (if (= a 0) 1 b))
