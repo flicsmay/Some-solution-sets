@@ -11,7 +11,6 @@
         ((assignment? exp) (analyze-assignment exp))
         ((definition? exp) (analyze-definition exp))
         ((if? exp) (analyze-if exp))
-        ((let? exp) (analyze (let->combination exp))) 
         ((lambda? exp) (analyze-lambda exp))
         ((begin? exp) (analyze-sequence (begin-actions exp)))
         ((cond? exp) (analyze (cond->if exp)))

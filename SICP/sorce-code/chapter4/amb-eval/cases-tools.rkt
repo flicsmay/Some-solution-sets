@@ -1,6 +1,16 @@
 ;#lang planet neil/sicp
 
-; each cases in evaln
+; ************ amb **************
+
+(define (amb? exp) (tagged-list? exp 'amb))
+(define (amb-choices exp) (cdr exp))
+
+; ************ self evalnuating **************
+
+(define (self-evaluating? exp)
+  (cond ((number? exp) true)
+        ((string? exp) true)
+        (else false)))
 
 ; ************ variable **************
 

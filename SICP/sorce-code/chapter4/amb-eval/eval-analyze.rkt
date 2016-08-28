@@ -1,17 +1,18 @@
 ;#lang planet neil/sicp
 
-(define (evaln exp env)
-  ((analyze exp) env))
+(define (ambeval exp env succeed fail)
+   ((analyze exp) env succeed fail))
 
 (define (analyze exp)
   (cond ((self-evaluating? exp) 
          (analyze-self-evaluating exp))
         ((quoted? exp) (analyze-quoted exp))
         ((variable? exp) (analyze-variable exp))
+        ((amb? exp) (analyze-amb exp))
         ((assignment? exp) (analyze-assignment exp))
         ((definition? exp) (analyze-definition exp))
         ((if? exp) (analyze-if exp))
-        ((let? exp) (analyze (let->combination exp))) 
+        ((let? exp) (analyze (let->combination exp)))
         ((lambda? exp) (analyze-lambda exp))
         ((begin? exp) (analyze-sequence (begin-actions exp)))
         ((cond? exp) (analyze (cond->if exp)))

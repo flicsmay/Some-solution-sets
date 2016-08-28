@@ -2,7 +2,8 @@
 
 ; analyze-eval 
 
-(define analyze-eval-path "c:\\users\\admin\\scheme\\chapter4\\analyze-eval\\")
+(define analyze-eval-path
+  "your-path")
 
 (define (install-analyze-eval)
   (load (string-append analyze-eval-path "tools.rkt"))

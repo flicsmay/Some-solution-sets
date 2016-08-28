@@ -2,17 +2,6 @@
 
 ; tools
 
-(define (list-of-values exps env)
-  (if (no-operands? exps)
-      '()
-      (cons (evaln (first-operand exps) env)
-            (list-of-values (rest-operands exps) env))))
-
-(define (evaln-sequence exps env)
-  (cond ((last-exp? exps) (evaln (first-exp exps) env))
-        (else (evaln (first-exp exps) env)
-              (evaln-sequence (rest-exps exps) env))))
-
 (define (tagged-list? exp tag)
   (if (pair? exp)
       (eq? (car exp) tag)
