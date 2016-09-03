@@ -1,0 +1,25 @@
+#lang planet neil/sicp
+
+; query eval
+
+(define query-eval-path "C:\\Users\\李烽源\\Desktop\\编程\\scheme\\qurey-system\\")
+
+(define (install-query-eval)
+  (load (string-append query-eval-path "query-tools.rkt"))
+  (load (string-append query-eval-path "get-put.rkt"))
+  
+  (load (string-append query-eval-path "stream-ops.rkt"))
+  (load (string-append query-eval-path "frame-ops.rkt"))
+  (load (string-append query-eval-path "assertions.rkt"))
+  (load (string-append query-eval-path "rules.rkt"))
+  
+  (load (string-append query-eval-path "fliter.rkt"))
+  (load (string-append query-eval-path "conjoin-disjoin.rkt"))
+  (load (string-append query-eval-path "eval.rkt"))
+  
+  (load (string-append query-eval-path "driver-loop-tools.rkt"))
+  (load (string-append query-eval-path "driver-loop.rkt"))
+  (load (string-append query-eval-path "initilize-procedure.rkt"))
+  'done)
+
+; (install-query-eval) (initilize-query) (query-driver-loop)

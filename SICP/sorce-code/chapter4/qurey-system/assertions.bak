@@ -1,0 +1,37 @@
+;#lang planet neil/sicp
+
+; assertion
+
+(define THE-ASSERTIONS the-empty-stream)
+
+(define (find-assertions pattern frame)
+   (stream-flatmap (lambda (datum)
+                     (check-an-assertion datum pattern frame))
+                   (fetch-assertions pattern frame)))
+
+(define (fetch-assertions pattern frame)
+   (if (use-index? pattern)
+       (get-indexed-assertions pattern)
+       (get-all-assertions)))
+
+(define (get-all-assertions) THE-ASSERTIONS)
+
+(define (get-indexed-assertions pattern)
+   (get-stream (index-key-of pattern) 'assertion-stream))
+
+(define (check-an-assertion assertion query-pat query-frame)
+   (let ((match-result
+          (pattern-match query-pat assertion query-frame)))
+     (if (eq? match-result 'failed)
+         the-empty-stream
+         (singleton-stream match-result))))
+
+(define (store-assertion-in-index assertion)
+   (if (indexable? assertion)
+       (let ((key (index-key-of assertion)))
+         (let ((current-assertion-stream
+                (get-stream key 'assertion-stream)))
+           (put key
+                'assertion-stream
+                (cons-stream assertion
+                             current-assertion-stream))))))
